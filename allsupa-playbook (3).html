@@ -1,0 +1,3086 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Allsupa · SaaS Operations Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal:    #1D9E75;
+    --teal-l:  #E1F5EE;
+    --teal-d:  #085041;
+    --purple:  #534AB7;
+    --purple-l:#EEEDFE;
+    --purple-d:#26215C;
+    --amber:   #BA7517;
+    --amber-l: #FAEEDA;
+    --red:     #E24B4A;
+    --red-l:   #FCEBEB;
+    --gray:    #888780;
+    --gray-l:  #F1EFE8;
+    --coral:   #D85A30;
+    --coral-l: #FAECE7;
+    --coral-d: #4A1B0C;
+    --blue:    #185FA5;
+    --blue-l:  #E6F1FB;
+    --blue-d:  #042C53;
+    --ink:     #18181a;
+    --ink2:    #44444a;
+    --ink3:    #888;
+    --surface: #f8f7f4;
+    --white:   #ffffff;
+    --border:  rgba(0,0,0,.09);
+    --radius:  12px;
+    --ff:      'DM Sans', sans-serif;
+    --fm:      'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--ff);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(248,247,244,.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0;
+    padding: 0 32px;
+    height: 52px;
+  }
+  .nav-logo {
+    font-weight: 500; font-size: 15px; color: var(--ink);
+    margin-right: auto; display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo span {
+    display: inline-block; width: 22px; height: 22px; border-radius: 6px;
+    background: var(--teal); color: #fff;
+    font-size: 11px; font-weight: 500; line-height: 22px; text-align: center;
+  }
+  .nav-tabs { display: flex; gap: 0; }
+  .nav-tab {
+    padding: 0 16px; height: 52px; line-height: 52px;
+    font-size: 13px; color: var(--ink3); cursor: pointer;
+    border-bottom: 2px solid transparent; transition: all .2s;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--ink); }
+  .nav-tab.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: 500; }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 72px 48px 56px;
+    max-width: 900px; margin: 0 auto;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--teal-l); color: var(--teal-d);
+    font-size: 11px; font-weight: 500; letter-spacing: .06em;
+    padding: 4px 10px; border-radius: 20px; margin-bottom: 20px;
+  }
+  .hero-tag::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--teal);
+  }
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 300; line-height: 1.2;
+    color: var(--ink); margin-bottom: 16px;
+  }
+  .hero h1 strong { font-weight: 500; color: var(--teal); }
+  .hero p { font-size: 16px; color: var(--ink2); max-width: 520px; }
+  .hero-cards {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px; margin-top: 40px;
+  }
+  .hero-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    cursor: pointer; transition: all .2s;
+  }
+  .hero-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+  .hero-card-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; margin-bottom: 12px;
+  }
+  .hero-card h3 { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+  .hero-card p { font-size: 12px; color: var(--ink3); }
+
+  /* ── SECTION WRAPPER ── */
+  .section {
+    max-width: 900px; margin: 0 auto;
+    padding: 16px 48px 48px;
+  }
+  .section-header { margin-bottom: 28px; }
+  .section-header h2 {
+    font-size: 22px; font-weight: 500; margin-bottom: 6px;
+  }
+  .section-header p { font-size: 14px; color: var(--ink3); }
+
+  /* ── TEAM FLOW ── */
+  .team-grid {
+    display: grid; grid-template-columns: 1fr 72px 1fr;
+    gap: 0; align-items: start;
+  }
+  .team-col-header {
+    padding: 10px 16px; border-radius: 8px 8px 0 0;
+    font-size: 12px; font-weight: 500; letter-spacing: .05em;
+    text-align: center;
+  }
+  .team-col-header.cs { background: var(--teal); color: #fff; }
+  .team-col-header.prod { background: var(--purple); color: #fff; }
+  .team-col-header.sales { background: var(--coral); color: #fff; }
+  .team-col-header.mkt { background: var(--blue); color: #fff; }
+  .steps-col { display: flex; flex-direction: column; gap: 0; }
+  .step {
+    background: var(--white); border: 1px solid var(--border);
+    border-top: none; padding: 14px 16px;
+    cursor: pointer; transition: background .15s;
+    position: relative;
+  }
+  .step:first-child { border-top: 1px solid var(--border); }
+  .step:last-child { border-radius: 0 0 8px 8px; }
+  .step:hover { background: #fafaf8; }
+  .step.cs:hover { border-left: 3px solid var(--teal); }
+  .step.prod:hover { border-right: 3px solid var(--purple); }
+  .step.sales:hover { border-left: 3px solid var(--coral); }
+  .step.mkt:hover { border-left: 3px solid var(--blue); }
+  .step-title { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+  .step-sub { font-size: 11px; color: var(--ink3); }
+  .step-arrow {
+    position: absolute; right: 12px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px; color: var(--ink3); opacity: 0;
+    transition: opacity .15s;
+  }
+  .step:hover .step-arrow { opacity: 1; }
+
+  /* Handoff middle */
+  .handoff-col {
+    display: flex; flex-direction: column;
+    align-items: center; padding-top: 44px; gap: 8px;
+  }
+  .hcard {
+    background: var(--amber-l); border: 1px solid var(--amber);
+    border-radius: 8px; padding: 8px 6px;
+    width: 64px; text-align: center; cursor: pointer;
+    transition: transform .15s;
+  }
+  .hcard:hover { transform: scale(1.06); }
+  .hcard-label { font-size: 9px; font-weight: 500; color: var(--amber); }
+  .hcard-arrow { font-size: 10px; color: var(--amber); margin-top: 2px; }
+
+  /* ── METRICS ROW ── */
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 12px; margin-bottom: 32px; }
+  .metric {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    text-align: center;
+  }
+  .metric-val { font-size: 28px; font-weight: 300; color: var(--ink); }
+  .metric-label { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+  .metric-tag {
+    display: inline-block; margin-top: 6px;
+    font-size: 10px; padding: 2px 8px; border-radius: 20px;
+  }
+
+  /* ── RENEWAL FLOW ── */
+  .timeline {
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 32px; background: var(--white);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .tl-item {
+    flex: 1; padding: 14px 12px; border-right: 1px solid var(--border);
+    cursor: pointer; transition: background .15s; text-align: center;
+  }
+  .tl-item:last-child { border-right: none; }
+  .tl-item:hover { background: var(--surface); }
+  .tl-day { font-family: var(--fm); font-size: 18px; font-weight: 500; }
+  .tl-label { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+
+  .risk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .risk-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .risk-header {
+    padding: 12px 16px; font-size: 12px; font-weight: 500;
+    letter-spacing: .04em;
+  }
+  .risk-body { padding: 12px 16px; }
+  .risk-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .risk-item:last-child { border-bottom: none; }
+  .risk-item::before { content: '—'; color: var(--ink3); flex-shrink: 0; font-size: 11px; margin-top: 2px; }
+  .risk-btn {
+    display: block; width: calc(100% - 32px); margin: 12px 16px;
+    padding: 8px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface); font-family: var(--ff);
+    font-size: 12px; cursor: pointer; color: var(--ink2);
+    transition: all .15s; text-align: center;
+  }
+  .risk-btn:hover { border-color: currentColor; background: var(--white); }
+
+  /* ── TEMPLATES PAGE ── */
+  .template-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .tpl-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; cursor: pointer;
+    transition: all .2s;
+  }
+  .tpl-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+  .tpl-top { padding: 16px; border-bottom: 1px solid var(--border); }
+  .tpl-tag {
+    display: inline-block; font-size: 10px; font-weight: 500;
+    padding: 2px 8px; border-radius: 20px; margin-bottom: 8px;
+    letter-spacing: .04em;
+  }
+  .tpl-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .tpl-desc { font-size: 12px; color: var(--ink3); }
+  .tpl-body { padding: 12px 16px; }
+  .tpl-field {
+    display: flex; gap: 8px; padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .tpl-field:last-child { border-bottom: none; }
+  .tpl-field-label { color: var(--ink3); min-width: 100px; }
+  .tpl-field-val { color: var(--ink2); font-family: var(--fm); font-size: 11px; }
+  .tpl-preview {
+    margin: 12px 16px; padding: 10px 12px;
+    background: var(--surface); border-radius: 8px;
+    font-size: 12px; color: var(--ink2); line-height: 1.6;
+    border-left: 3px solid var(--teal);
+    font-family: var(--fm);
+  }
+
+  /* ── MODAL ── */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,.35);
+    z-index: 200; display: none; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 16px;
+    width: 100%; max-width: 640px; max-height: 80vh;
+    overflow-y: auto; position: relative;
+  }
+  .modal-header {
+    padding: 24px 28px 16px; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; background: var(--white); z-index: 1;
+  }
+  .modal-header h3 { font-size: 16px; font-weight: 500; }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px;
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--surface);
+    cursor: pointer; font-size: 14px; color: var(--ink2);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-body { padding: 20px 28px 28px; }
+  .modal-section { margin-bottom: 20px; }
+  .modal-section h4 { font-size: 12px; font-weight: 500; color: var(--ink3); letter-spacing: .05em; margin-bottom: 8px; text-transform: uppercase; }
+  .modal-section p, .modal-section li { font-size: 14px; color: var(--ink2); line-height: 1.7; }
+  .modal-section ul { padding-left: 16px; }
+  .modal-section li { margin-bottom: 4px; }
+  .modal-pre {
+    background: var(--surface); border-radius: 8px;
+    padding: 14px 16px; font-family: var(--fm);
+    font-size: 12px; color: var(--ink2); line-height: 1.7;
+    white-space: pre-wrap; border-left: 3px solid var(--teal);
+  }
+  .copy-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 10px; padding: 7px 14px;
+    border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface); font-family: var(--ff);
+    font-size: 12px; cursor: pointer; color: var(--ink2);
+    transition: all .15s;
+  }
+  .copy-btn:hover { background: var(--teal-l); border-color: var(--teal); color: var(--teal-d); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 32px;
+    font-size: 12px; color: var(--ink3);
+    border-top: 1px solid var(--border); margin-top: 32px;
+  }
+
+  /* ── METRICS PAGE ── */
+  .metrics-team-block { margin-bottom: 48px; }
+  .metrics-team-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 500; letter-spacing: .06em;
+    padding: 5px 12px; border-radius: 20px; margin-bottom: 20px;
+  }
+  .metrics-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .mcard {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    transition: transform .15s, border-color .15s;
+    cursor: default;
+  }
+  .mcard:hover { transform: translateY(-2px); }
+  .mcard-top {
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .mcard-name {
+    font-size: 13px; font-weight: 500; margin-bottom: 2px;
+  }
+  .mcard-full {
+    font-size: 11px; color: var(--ink3); font-family: var(--fm);
+  }
+  .mcard-body { padding: 12px 16px; }
+  .mcard-def {
+    font-size: 13px; color: var(--ink2); line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .mcard-formula {
+    background: var(--surface); border-radius: 6px;
+    padding: 7px 10px; font-family: var(--fm);
+    font-size: 11px; color: var(--ink2);
+    border-left: 2px solid var(--border);
+    margin-bottom: 10px;
+  }
+  .mcard-bands { display: flex; gap: 6px; flex-wrap: wrap; }
+  .band {
+    font-size: 11px; padding: 2px 8px; border-radius: 20px;
+    font-weight: 500;
+  }
+  .band-good  { background: var(--teal-l);   color: var(--teal-d); }
+  .band-mid   { background: var(--amber-l);  color: var(--amber); }
+  .band-bad   { background: var(--red-l);    color: var(--red); }
+  .band-info  { background: var(--purple-l); color: var(--purple); }
+  .mcard-action {
+    margin-top: 8px; font-size: 11px; color: var(--ink3);
+    border-top: 1px solid var(--border); padding-top: 8px;
+    line-height: 1.5;
+  }
+  .mcard-action strong { color: var(--ink2); font-weight: 500; }
+
+  /* Health score visual */
+  .health-bar-wrap { margin: 16px 0 8px; }
+  .health-bar-track {
+    height: 8px; border-radius: 4px;
+    display: flex; overflow: hidden; gap: 2px;
+  }
+  .health-seg { height: 100%; border-radius: 2px; }
+  .health-labels {
+    display: flex; justify-content: space-between;
+    font-size: 10px; color: var(--ink3); margin-top: 4px;
+    font-family: var(--fm);
+  }
+
+  /* ── SALES & MARKETING ── */
+  .band-coral { background: var(--coral-l); color: var(--coral-d); }
+  .band-blue  { background: var(--blue-l);  color: var(--blue-d); }
+
+  .four-col-grid {
+    display: grid;
+    grid-template-columns: 1fr 56px 1fr 56px 1fr 56px 1fr;
+    gap: 0; align-items: start;
+  }
+  .team-col-header.sales2 { background: var(--coral); color:#fff; }
+
+  /* Revenue funnel */
+  .funnel-wrap { display:flex; flex-direction:column; gap:6px; margin-bottom:32px; }
+  .funnel-stage {
+    display:flex; align-items:center; gap:12px;
+    background:var(--white); border:1px solid var(--border);
+    border-radius:8px; padding:10px 16px; cursor:pointer;
+    transition: border-color .15s;
+  }
+  .funnel-stage:hover { border-color: var(--coral); }
+  .funnel-bar-cell { flex:0 0 180px; }
+  .funnel-bar-track { height:8px; background:var(--surface); border-radius:4px; overflow:hidden; }
+  .funnel-bar-fill  { height:100%; border-radius:4px; transition: width .4s ease; }
+  .funnel-label { flex:1; }
+  .funnel-name { font-size:13px; font-weight:500; }
+  .funnel-sub  { font-size:11px; color:var(--ink3); }
+  .funnel-num  { font-family:var(--fm); font-size:13px; color:var(--ink2); min-width:60px; text-align:right; }
+  .funnel-pct  { font-size:11px; color:var(--ink3); min-width:36px; text-align:right; }
+
+  /* Pipeline stages */
+  .pipeline { display:flex; gap:0; overflow-x:auto; margin-bottom:32px; }
+  .pipe-stage {
+    flex:1; min-width:110px; padding:14px 12px;
+    border-right:1px solid var(--border);
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    background:var(--white); text-align:center;
+    cursor:pointer; transition:background .15s;
+  }
+  .pipe-stage:first-child { border-left:1px solid var(--border); border-radius:8px 0 0 8px; }
+  .pipe-stage:last-child  { border-radius:0 8px 8px 0; }
+  .pipe-stage:hover { background:var(--surface); }
+  .pipe-stage-num { font-family:var(--fm); font-size:20px; font-weight:500; }
+  .pipe-stage-label { font-size:11px; color:var(--ink3); margin-top:2px; }
+  .pipe-stage-days  { font-size:10px; color:var(--ink3); margin-top:4px; }
+
+  /* Two-col split for sales/marketing page */
+  .split-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:32px; }
+  @media(max-width:640px){ .split-grid { grid-template-columns:1fr; } }
+
+  .team-block {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:var(--radius); overflow:hidden;
+  }
+  .team-block-header {
+    padding:12px 16px; font-size:12px; font-weight:500;
+    letter-spacing:.05em; display:flex; align-items:center; gap:8px;
+  }
+  .team-block-body { padding:0; }
+  .team-block .step { border-left:none; border-right:none; }
+  .team-block .step:first-child { border-top:none; }
+
+  .handoff-row {
+    display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px;
+  }
+  .handoff-pill {
+    display:flex; align-items:center; gap:6px;
+    border:1px solid var(--border); border-radius:20px;
+    padding:6px 12px; font-size:12px; background:var(--white);
+    cursor:pointer; transition:all .15s;
+  }
+  .handoff-pill:hover { transform:translateY(-1px); border-color:currentColor; }
+  .handoff-pill-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+
+  /* ── DAILY TASKS PAGE ── */
+  .dt-layout { display:grid; grid-template-columns:220px 1fr; gap:24px; align-items:start; }
+  @media(max-width:680px){ .dt-layout { grid-template-columns:1fr; } }
+
+  .dt-sidebar { position:sticky; top:68px; }
+  .dt-dept-btn {
+    width:100%; text-align:left; padding:10px 14px;
+    border:1px solid var(--border); border-radius:8px;
+    background:var(--white); font-family:var(--ff);
+    font-size:13px; cursor:pointer; margin-bottom:6px;
+    display:flex; align-items:center; gap:10px;
+    transition:all .15s; color:var(--ink2);
+  }
+  .dt-dept-btn:hover { border-color:var(--ink3); }
+  .dt-dept-btn.active { font-weight:500; color:var(--white); border-color:transparent; }
+  .dt-dept-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+  .dt-role-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px; }
+  .dt-role-tab {
+    padding:5px 14px; border-radius:20px; font-size:12px;
+    border:1px solid var(--border); background:var(--white);
+    cursor:pointer; transition:all .15s; color:var(--ink2);
+    font-family:var(--ff);
+  }
+  .dt-role-tab:hover { border-color:var(--ink3); }
+  .dt-role-tab.active { font-weight:500; color:var(--white); border-color:transparent; }
+
+  .dt-content { display:none; }
+  .dt-content.active { display:block; }
+
+  .dt-period-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+  @media(max-width:520px){ .dt-period-grid { grid-template-columns:1fr; } }
+
+  .dt-period-card {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:var(--radius); overflow:hidden;
+  }
+  .dt-period-header {
+    padding:10px 16px; font-size:11px; font-weight:500;
+    letter-spacing:.06em; display:flex; align-items:center; gap:8px;
+    border-bottom:1px solid var(--border);
+  }
+  .dt-period-body { padding:8px 0; }
+  .dt-task {
+    display:flex; align-items:flex-start; gap:10px;
+    padding:7px 16px; border-bottom:1px solid var(--border);
+    font-size:13px; line-height:1.5; transition:background .1s;
+    cursor:default;
+  }
+  .dt-task:last-child { border-bottom:none; }
+  .dt-task:hover { background:var(--surface); }
+  .dt-check {
+    width:15px; height:15px; border-radius:4px;
+    border:1.5px solid var(--border); flex-shrink:0; margin-top:1px;
+    cursor:pointer; transition:all .15s; display:flex;
+    align-items:center; justify-content:center;
+  }
+  .dt-check.done { border-color:var(--teal); background:var(--teal); }
+  .dt-check.done::after { content:'✓'; color:#fff; font-size:9px; font-weight:700; }
+  .dt-task-text { flex:1; }
+  .dt-task-text.done { text-decoration:line-through; color:var(--ink3); }
+  .dt-tag {
+    font-size:10px; padding:1px 6px; border-radius:10px;
+    flex-shrink:0; margin-top:2px; font-weight:500;
+  }
+
+  .dt-weekly-row {
+    display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:20px;
+  }
+  @media(max-width:600px){ .dt-weekly-row { grid-template-columns:repeat(2,1fr); } }
+  .dt-day-card {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:10px; overflow:hidden;
+  }
+  .dt-day-header {
+    padding:8px 12px; font-size:11px; font-weight:500;
+    letter-spacing:.05em; border-bottom:1px solid var(--border);
+    text-align:center;
+  }
+  .dt-day-body { padding:8px 0; }
+  .dt-day-task {
+    padding:5px 12px; font-size:12px; color:var(--ink2);
+    border-bottom:1px solid var(--border); line-height:1.4;
+  }
+  .dt-day-task:last-child { border-bottom:none; }
+
+  .dt-tip {
+    background:var(--amber-l); border:1px solid var(--amber);
+    border-radius:8px; padding:12px 16px; font-size:13px;
+    color:var(--amber); margin-top:16px; line-height:1.6;
+  }
+  .dt-tip strong { color:var(--amber); font-weight:500; }
+
+  /* ── ANIM ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .page.active .hero,
+  .page.active .section { animation: fadeUp .35s ease both; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span>S</span> Allsupa · Ops Playbook
+  </div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="goTo('home',this)">Tổng quan</div>
+    <div class="nav-tab" onclick="goTo('ops',this)">CS & Product</div>
+    <div class="nav-tab" onclick="goTo('salespage',this)">Sales & Marketing</div>
+    <div class="nav-tab" onclick="goTo('renewal',this)">Renewal & Churn</div>
+    <div class="nav-tab" onclick="goTo('templates',this)">Mẫu tài liệu</div>
+    <div class="nav-tab" onclick="goTo('metrics',this)">Metrics giải thích</div>
+    <div class="nav-tab" onclick="goTo('dailytasks',this)">Công việc hàng ngày</div>
+  </div>
+</nav>
+
+<!-- ══════════════════ PAGE: HOME ══════════════════ -->
+<div id="home" class="page active">
+  <div class="hero">
+    <div class="hero-tag">allsupa.com · Internal Playbook 2025</div>
+    <h1>Vận hành SaaS<br><strong>4 phòng ban · 1 hệ thống</strong></h1>
+    <p>Tài liệu nội bộ mô tả quy trình, handoff và mẫu tài liệu cho toàn bộ các team vận hành Allsupa.</p>
+    <div class="hero-cards">
+      <div class="hero-card" onclick="goTo('ops', document.querySelectorAll('.nav-tab')[1])">
+        <div class="hero-card-icon" style="background:var(--teal-l);">📋</div>
+        <h3>CS & Product</h3>
+        <p>Luồng công việc, handoff, feature adoption</p>
+      </div>
+      <div class="hero-card" onclick="goTo('salespage', document.querySelectorAll('.nav-tab')[2])">
+        <div class="hero-card-icon" style="background:var(--coral-l);">🎯</div>
+        <h3>Sales & Marketing</h3>
+        <p>Pipeline bán hàng, tạo leads, brand và handoff với CS</p>
+      </div>
+      <div class="hero-card" onclick="goTo('renewal', document.querySelectorAll('.nav-tab')[3])">
+        <div class="hero-card-icon" style="background:var(--red-l);">🔄</div>
+        <h3>Renewal & Churn</h3>
+        <p>Quy trình 90 ngày, phân loại rủi ro, hành động cụ thể</p>
+      </div>
+      <div class="hero-card" onclick="goTo('templates', document.querySelectorAll('.nav-tab')[4])">
+        <div class="hero-card-icon" style="background:var(--purple-l);">📄</div>
+        <h3>Mẫu tài liệu</h3>
+        <p>Feedback report, release note, adoption brief, save plan</p>
+      </div>
+      <div class="hero-card" onclick="goTo('metrics', document.querySelectorAll('.nav-tab')[5])">
+        <div class="hero-card-icon" style="background:var(--amber-l);">📊</div>
+        <h3>Metrics giải thích</h3>
+        <p>Giải nghĩa toàn bộ chỉ số các team, cách đọc và ngưỡng tốt/xấu</p>
+      </div>
+      <div class="hero-card" onclick="goTo('dailytasks', document.querySelectorAll('.nav-tab')[6])">
+        <div class="hero-card-icon" style="background:var(--gray-l);">🗓️</div>
+        <h3>Công việc hàng ngày</h3>
+        <p>Daily & weekly checklist theo từng phòng ban và vị trí cụ thể</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ PAGE: OPS ══════════════════ -->
+<div id="ops" class="page">
+  <div class="section">
+    <div class="section-header">
+      <h2>CS & Product</h2>
+      <p>Luồng công việc của từng team và 3 điểm handoff quan trọng giữa CS và Product</p>
+    </div>
+
+    <div class="team-grid">
+      <!-- CS Column -->
+      <div>
+        <div class="team-col-header cs">Customer Success</div>
+        <div class="steps-col">
+          <div class="step cs" onclick="openModal('cs1')">
+            <div class="step-title">Onboarding & Setup</div>
+            <div class="step-sub">Kích hoạt · Hướng dẫn · Mục tiêu KH</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step cs" onclick="openModal('cs2')">
+            <div class="step-title">Relationship Management</div>
+            <div class="step-sub">Check-in định kỳ · Health score · Hỗ trợ</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step cs" onclick="openModal('cs3')">
+            <div class="step-title">Feature Adoption · Supa</div>
+            <div class="step-sub">Giới thiệu tính năng · Training · Đo lường</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step cs" onclick="openModal('cs4')">
+            <div class="step-title">Feedback Collection</div>
+            <div class="step-sub">NPS · Interview · Feature request tổng hợp</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step cs" onclick="goTo('renewal', document.querySelector('[onclick*=renewal]'))">
+            <div class="step-title">Renewal & Expansion</div>
+            <div class="step-sub">Đánh giá HĐ · Upsell · Churn prevention</div>
+            <span class="step-arrow">→</span>
+          </div>
+        </div>
+        <div style="margin-top:16px;padding:14px 16px;background:var(--teal-l);border-radius:8px;">
+          <div style="font-size:11px;font-weight:500;color:var(--teal-d);margin-bottom:6px;">METRICS CS THEO DÕI</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--teal-d);">NPS</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--teal-d);">CSAT</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--teal-d);">Churn rate</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--teal-d);">Health score</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--teal-d);">Adoption rate</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Handoff Column -->
+      <div class="handoff-col">
+        <div class="hcard" onclick="openModal('h_feedback')" style="background:var(--amber-l);border-color:var(--amber);">
+          <div class="hcard-label" style="color:var(--amber);">Feedback<br>Report</div>
+          <div class="hcard-arrow" style="color:var(--amber);">⇄</div>
+        </div>
+        <div class="hcard" onclick="openModal('h_release')" style="background:var(--purple-l);border-color:var(--purple);">
+          <div class="hcard-label" style="color:var(--purple);">Release<br>Notes</div>
+          <div class="hcard-arrow" style="color:var(--purple);">⇄</div>
+        </div>
+        <div class="hcard" onclick="openModal('h_adoption')" style="background:var(--purple-l);border-color:var(--purple);">
+          <div class="hcard-label" style="color:var(--purple);">Adoption<br>Brief</div>
+          <div class="hcard-arrow" style="color:var(--purple);">⇄</div>
+        </div>
+      </div>
+
+      <!-- Product Column -->
+      <div>
+        <div class="team-col-header prod">Product Team</div>
+        <div class="steps-col">
+          <div class="step prod" onclick="openModal('p1')">
+            <div class="step-title">Discovery & Research</div>
+            <div class="step-sub">Market · Đối thủ · User research</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step prod" onclick="openModal('p2')">
+            <div class="step-title">Prioritization & Roadmap</div>
+            <div class="step-sub">Scoring · OKR · Backlog</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step prod" onclick="openModal('p3')">
+            <div class="step-title">Design & Spec</div>
+            <div class="step-sub">Wireframe · PRD · Stakeholder review</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step prod" onclick="openModal('p4')">
+            <div class="step-title">Build & Launch</div>
+            <div class="step-sub">Engineering · QA · Release note</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step prod" onclick="openModal('p5')">
+            <div class="step-title">Analytics & Iteration</div>
+            <div class="step-sub">Adoption · A/B test · Cải tiến</div>
+            <span class="step-arrow">→</span>
+          </div>
+        </div>
+        <div style="margin-top:16px;padding:14px 16px;background:var(--purple-l);border-radius:8px;">
+          <div style="font-size:11px;font-weight:500;color:var(--purple-d);margin-bottom:6px;">METRICS PRODUCT THEO DÕI</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--purple-d);">DAU/WAU</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--purple-d);">Feature adoption</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--purple-d);">Retention</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--purple-d);">Time-to-value</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ PAGE: SALES & MARKETING ══════════════════ -->
+<div id="salespage" class="page">
+  <div class="section">
+    <div class="section-header">
+      <h2>Sales & Marketing</h2>
+      <p>Quy trình tạo khách hàng tiềm năng, chốt deal và bàn giao sang CS để onboard</p>
+    </div>
+
+    <!-- Handoff pills overview -->
+    <div style="margin-bottom:24px;">
+      <div style="font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--ink3);margin-bottom:10px;">CÁC ĐIỂM HANDOFF CHÍNH</div>
+      <div class="handoff-row">
+        <div class="handoff-pill" style="color:var(--coral);" onclick="openModal('h_mql')">
+          <div class="handoff-pill-dot" style="background:var(--blue);"></div>
+          Marketing → Sales: MQL
+        </div>
+        <div class="handoff-pill" style="color:var(--coral);" onclick="openModal('h_sql')">
+          <div class="handoff-pill-dot" style="background:var(--coral);"></div>
+          Sales qualify → SQL
+        </div>
+        <div class="handoff-pill" style="color:var(--teal);" onclick="openModal('h_won')">
+          <div class="handoff-pill-dot" style="background:var(--teal);"></div>
+          Sales → CS: Won deal handoff
+        </div>
+        <div class="handoff-pill" style="color:var(--amber);" onclick="openModal('h_expansion')">
+          <div class="handoff-pill-dot" style="background:var(--amber);"></div>
+          CS → Sales: Expansion signal
+        </div>
+        <div class="handoff-pill" style="color:var(--blue);" onclick="openModal('h_content')">
+          <div class="handoff-pill-dot" style="background:var(--blue);"></div>
+          Marketing → CS: Content & case study
+        </div>
+      </div>
+    </div>
+
+    <!-- Sales Pipeline -->
+    <div style="font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--ink3);margin-bottom:10px;">SALES PIPELINE</div>
+    <div class="pipeline">
+      <div class="pipe-stage" onclick="openModal('pipe_prospect')">
+        <div class="pipe-stage-num" style="color:var(--blue);">1</div>
+        <div class="pipe-stage-label">Prospecting</div>
+        <div class="pipe-stage-days">Thời gian TB: 7 ngày</div>
+      </div>
+      <div class="pipe-stage" onclick="openModal('pipe_qualify')">
+        <div class="pipe-stage-num" style="color:var(--blue);">2</div>
+        <div class="pipe-stage-label">Qualification</div>
+        <div class="pipe-stage-days">Thời gian TB: 5 ngày</div>
+      </div>
+      <div class="pipe-stage" onclick="openModal('pipe_demo')">
+        <div class="pipe-stage-num" style="color:var(--coral);">3</div>
+        <div class="pipe-stage-label">Demo / Discovery</div>
+        <div class="pipe-stage-days">Thời gian TB: 7 ngày</div>
+      </div>
+      <div class="pipe-stage" onclick="openModal('pipe_proposal')">
+        <div class="pipe-stage-num" style="color:var(--coral);">4</div>
+        <div class="pipe-stage-label">Proposal</div>
+        <div class="pipe-stage-days">Thời gian TB: 10 ngày</div>
+      </div>
+      <div class="pipe-stage" onclick="openModal('pipe_negotiate')">
+        <div class="pipe-stage-num" style="color:var(--amber);">5</div>
+        <div class="pipe-stage-label">Đàm phán</div>
+        <div class="pipe-stage-days">Thời gian TB: 7 ngày</div>
+      </div>
+      <div class="pipe-stage" onclick="openModal('pipe_close')" style="background:var(--teal-l);">
+        <div class="pipe-stage-num" style="color:var(--teal-d);">6</div>
+        <div class="pipe-stage-label" style="color:var(--teal-d);">Closed Won</div>
+        <div class="pipe-stage-days" style="color:var(--teal);">→ Bàn giao CS</div>
+      </div>
+    </div>
+
+    <!-- Marketing Funnel -->
+    <div style="font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--ink3);margin-bottom:10px;">MARKETING FUNNEL</div>
+    <div class="funnel-wrap">
+      <div class="funnel-stage" onclick="openModal('funnel_aware')">
+        <div class="funnel-label">
+          <div class="funnel-name">Awareness</div>
+          <div class="funnel-sub">Content, SEO, Social, Ads, Events</div>
+        </div>
+        <div class="funnel-bar-cell">
+          <div class="funnel-bar-track"><div class="funnel-bar-fill" style="width:100%;background:var(--blue);opacity:.7;"></div></div>
+        </div>
+        <div class="funnel-num">Visitors</div>
+        <div class="funnel-pct">100%</div>
+      </div>
+      <div class="funnel-stage" onclick="openModal('funnel_interest')">
+        <div class="funnel-label">
+          <div class="funnel-name">Interest / Lead</div>
+          <div class="funnel-sub">Form đăng ký, Free trial, Webinar sign-up</div>
+        </div>
+        <div class="funnel-bar-cell">
+          <div class="funnel-bar-track"><div class="funnel-bar-fill" style="width:30%;background:var(--blue);opacity:.8;"></div></div>
+        </div>
+        <div class="funnel-num">Leads</div>
+        <div class="funnel-pct">~30%</div>
+      </div>
+      <div class="funnel-stage" onclick="openModal('funnel_mql')">
+        <div class="funnel-label">
+          <div class="funnel-name">MQL — Marketing Qualified Lead</div>
+          <div class="funnel-sub">Lead đạt điểm ICP, chuyển sang Sales</div>
+        </div>
+        <div class="funnel-bar-cell">
+          <div class="funnel-bar-track"><div class="funnel-bar-fill" style="width:18%;background:var(--coral);opacity:.8;"></div></div>
+        </div>
+        <div class="funnel-num">MQLs</div>
+        <div class="funnel-pct">~18%</div>
+      </div>
+      <div class="funnel-stage" onclick="openModal('funnel_sql')">
+        <div class="funnel-label">
+          <div class="funnel-name">SQL — Sales Qualified Lead</div>
+          <div class="funnel-sub">Sales xác nhận fit, có nhu cầu & ngân sách</div>
+        </div>
+        <div class="funnel-bar-cell">
+          <div class="funnel-bar-track"><div class="funnel-bar-fill" style="width:10%;background:var(--coral);"></div></div>
+        </div>
+        <div class="funnel-num">SQLs</div>
+        <div class="funnel-pct">~10%</div>
+      </div>
+      <div class="funnel-stage" onclick="openModal('pipe_close')" style="border-color:var(--teal);">
+        <div class="funnel-label">
+          <div class="funnel-name" style="color:var(--teal-d);">Closed Won → Khách hàng</div>
+          <div class="funnel-sub">Ký hợp đồng, bàn giao CS onboard</div>
+        </div>
+        <div class="funnel-bar-cell">
+          <div class="funnel-bar-track"><div class="funnel-bar-fill" style="width:4%;background:var(--teal);"></div></div>
+        </div>
+        <div class="funnel-num" style="color:var(--teal);">Deals</div>
+        <div class="funnel-pct" style="color:var(--teal);">~4%</div>
+      </div>
+    </div>
+
+    <!-- Two columns: Sales process + Marketing activities -->
+    <div class="split-grid">
+
+      <!-- SALES -->
+      <div class="team-block" style="border-top:3px solid var(--coral);">
+        <div class="team-block-header" style="background:var(--coral-l);color:var(--coral-d);">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--coral);"></div>
+          Phòng Kinh Doanh (Sales)
+        </div>
+        <div class="team-block-body">
+          <div class="step sales" onclick="openModal('sales_prospect')">
+            <div class="step-title">Prospecting & Outreach</div>
+            <div class="step-sub">ICP research · Cold outreach · LinkedIn · Referral</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step sales" onclick="openModal('sales_qualify')">
+            <div class="step-title">Qualification (BANT / MEDDIC)</div>
+            <div class="step-sub">Budget · Authority · Need · Timeline</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step sales" onclick="openModal('sales_demo')">
+            <div class="step-title">Demo & Discovery call</div>
+            <div class="step-sub">Tìm hiểu pain · Demo Allsupa · Fit check</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step sales" onclick="openModal('sales_proposal')">
+            <div class="step-title">Gửi đề xuất & báo giá</div>
+            <div class="step-sub">Proposal · Pricing · ROI estimate</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step sales" onclick="openModal('sales_negotiate')">
+            <div class="step-title">Đàm phán & xử lý objection</div>
+            <div class="step-sub">Điều khoản · Discount policy · Legal review</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step sales" onclick="openModal('sales_close')">
+            <div class="step-title">Ký hợp đồng & bàn giao CS</div>
+            <div class="step-sub">Closed Won · Handoff doc · Intro CS</div>
+            <span class="step-arrow">→</span>
+          </div>
+        </div>
+        <div style="padding:12px 16px;background:var(--coral-l);border-top:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:500;color:var(--coral-d);margin-bottom:6px;">METRICS SALES THEO DÕI</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--coral-d);">Win rate</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--coral-d);">Sales cycle (ngày)</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--coral-d);">ACV / Deal size</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--coral-d);">Pipeline coverage</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--coral-d);">Quota attainment</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MARKETING -->
+      <div class="team-block" style="border-top:3px solid var(--blue);">
+        <div class="team-block-header" style="background:var(--blue-l);color:var(--blue-d);">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);"></div>
+          Phòng Marketing
+        </div>
+        <div class="team-block-body">
+          <div class="step mkt" onclick="openModal('mkt_brand')">
+            <div class="step-title">Brand & Positioning</div>
+            <div class="step-sub">Thông điệp · ICP định nghĩa · Website</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step mkt" onclick="openModal('mkt_content')">
+            <div class="step-title">Content Marketing</div>
+            <div class="step-sub">Blog · SEO · Case study · Newsletter</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step mkt" onclick="openModal('mkt_demand')">
+            <div class="step-title">Demand Generation</div>
+            <div class="step-sub">Paid Ads · Social · Webinar · Events</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step mkt" onclick="openModal('mkt_lead')">
+            <div class="step-title">Lead Nurturing</div>
+            <div class="step-sub">Email sequence · Retargeting · Lead scoring</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step mkt" onclick="openModal('mkt_mql')">
+            <div class="step-title">Chuyển MQL → Sales</div>
+            <div class="step-sub">Đạt ngưỡng điểm ICP · Alert Sales trong 24h</div>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step mkt" onclick="openModal('mkt_enable')">
+            <div class="step-title">Sales Enablement</div>
+            <div class="step-sub">Deck · Brochure · Competitor sheet · Case study</div>
+            <span class="step-arrow">→</span>
+          </div>
+        </div>
+        <div style="padding:12px 16px;background:var(--blue-l);border-top:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:500;color:var(--blue-d);margin-bottom:6px;">METRICS MARKETING THEO DÕI</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--blue-d);">MQL volume</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--blue-d);">CAC</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--blue-d);">MQL → SQL rate</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--blue-d);">CPL theo channel</span>
+            <span style="font-size:11px;background:var(--white);padding:3px 8px;border-radius:20px;color:var(--blue-d);">Organic traffic</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ PAGE: RENEWAL ══════════════════ -->
+<div id="renewal" class="page">
+  <div class="section">
+    <div class="section-header">
+      <h2>Renewal & Churn Prevention</h2>
+      <p>Quy trình 90 ngày từ alert đến ký gia hạn — phân nhánh theo health score</p>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-day" style="color:var(--teal);">T–90</div>
+        <div class="tl-label">Alert tự động<br>Đánh giá health score</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-day" style="color:var(--amber);">T–60</div>
+        <div class="tl-label">Check-in sâu<br>Xác định rủi ro</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-day" style="color:var(--amber);">T–45</div>
+        <div class="tl-label">Gửi đề xuất<br>ROI report</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-day" style="color:var(--red);">T–30</div>
+        <div class="tl-label">Follow-up<br>Đàm phán nếu cần</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-day" style="color:var(--purple);">T–14</div>
+        <div class="tl-label">Nhắc ký<br>Chuẩn bị HĐ mới</div>
+      </div>
+      <div class="tl-item" style="background:var(--teal-l);">
+        <div class="tl-day" style="color:var(--teal-d);">T–0</div>
+        <div class="tl-label" style="color:var(--teal-d);">Ký gia hạn<br>Celebrate 🎉</div>
+      </div>
+    </div>
+
+    <!-- Health score metrics -->
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-val">90</div>
+        <div class="metric-label">Ngày bắt đầu trước hạn</div>
+        <span class="metric-tag" style="background:var(--teal-l);color:var(--teal-d);">Alert trigger</span>
+      </div>
+      <div class="metric">
+        <div class="metric-val" style="color:var(--red);">&lt;40</div>
+        <div class="metric-label">Health score → Nguy cơ cao</div>
+        <span class="metric-tag" style="background:var(--red-l);color:var(--red);">Họp C-level 7 ngày</span>
+      </div>
+      <div class="metric">
+        <div class="metric-val" style="color:var(--amber);">40–70</div>
+        <div class="metric-label">Health score → Trung bình</div>
+        <span class="metric-tag" style="background:var(--amber-l);color:var(--amber);">Check-in & boost</span>
+      </div>
+      <div class="metric">
+        <div class="metric-val" style="color:var(--teal);">&gt;70</div>
+        <div class="metric-label">Health score → Khỏe mạnh</div>
+        <span class="metric-tag" style="background:var(--teal-l);color:var(--teal-d);">Upsell & fast renew</span>
+      </div>
+    </div>
+
+    <!-- Risk cards -->
+    <div class="risk-grid">
+      <!-- Red -->
+      <div class="risk-card">
+        <div class="risk-header" style="background:var(--red-l);color:var(--red);">NGUY CƠ CAO · Score &lt;40</div>
+        <div class="risk-body">
+          <div class="risk-item">Họp C-level trong vòng 7 ngày</div>
+          <div class="risk-item">Phân tích nguyên nhân gốc (root cause)</div>
+          <div class="risk-item">Lập Save Plan có timeline cụ thể</div>
+          <div class="risk-item">Escalate lên CS Manager</div>
+          <div class="risk-item">Deal đặc biệt nếu cần thiết</div>
+        </div>
+        <button class="risk-btn" style="color:var(--red);border-color:var(--red);" onclick="openModal('save_plan')">Xem mẫu Save Plan →</button>
+      </div>
+      <!-- Amber -->
+      <div class="risk-card">
+        <div class="risk-header" style="background:var(--amber-l);color:var(--amber);">TRUNG BÌNH · Score 40–70</div>
+        <div class="risk-body">
+          <div class="risk-item">Check-in sâu tìm pain point hiện tại</div>
+          <div class="risk-item">Demo tính năng Supa chưa dùng</div>
+          <div class="risk-item">Training thêm cho team khách hàng</div>
+          <div class="risk-item">Gửi ROI report cụ thể theo ngành</div>
+          <div class="risk-item">Gửi báo giá kèm value story</div>
+        </div>
+        <button class="risk-btn" style="color:var(--amber);border-color:var(--amber);" onclick="openModal('roi_report')">Xem mẫu ROI Report →</button>
+      </div>
+      <!-- Green -->
+      <div class="risk-card">
+        <div class="risk-header" style="background:var(--teal-l);color:var(--teal-d);">KHỎE MẠNH · Score &gt;70</div>
+        <div class="risk-body">
+          <div class="risk-item">Gửi báo giá gia hạn sớm (T-60)</div>
+          <div class="risk-item">Đề xuất upsell / mở rộng team</div>
+          <div class="risk-item">Mời viết case study cho Allsupa</div>
+          <div class="risk-item">Chương trình referral / giới thiệu</div>
+          <div class="risk-item">Fast renewal + điều khoản ưu đãi</div>
+        </div>
+        <button class="risk-btn" style="color:var(--teal);border-color:var(--teal);" onclick="openModal('upsell_email')">Xem mẫu Upsell Email →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ PAGE: TEMPLATES ══════════════════ -->
+<div id="templates" class="page">
+  <div class="section">
+    <div class="section-header">
+      <h2>Mẫu tài liệu</h2>
+      <p>Nhấn vào từng mẫu để xem nội dung đầy đủ và sao chép</p>
+    </div>
+    <div class="template-grid">
+
+      <div class="tpl-card" onclick="openModal('feedback_report')">
+        <div class="tpl-top">
+          <div class="tpl-tag" style="background:var(--amber-l);color:var(--amber);">CS → PRODUCT · Hàng tuần</div>
+          <div class="tpl-title">Feedback Report</div>
+          <div class="tpl-desc">Tổng hợp feedback và feature request từ khách hàng gửi lên Product</div>
+        </div>
+        <div class="tpl-body">
+          <div class="tpl-field"><span class="tpl-field-label">Tần suất</span><span class="tpl-field-val">Hàng tuần (thứ 6)</span></div>
+          <div class="tpl-field"><span class="tpl-field-label">Người gửi</span><span class="tpl-field-val">CS Lead → Product Manager</span></div>
+          <div class="tpl-field"><span class="tpl-field-label">Format</span><span class="tpl-field-val">Notion / Google Docs</span></div>
+        </div>
+      </div>
+
+      <div class="tpl-card" onclick="openModal('release_note')">
+        <div class="tpl-top">
+          <div class="tpl-tag" style="background:var(--purple-l);color:var(--purple);">PRODUCT → CS · Mỗi sprint</div>
+          <div class="tpl-title">Release Note</div>
+          <div class="tpl-desc">Thông tin tính năng mới để CS thông báo và hướng dẫn khách hàng</div>
+        </div>
+        <div class="tpl-body">
+          <div class="tpl-field"><span class="tpl-field-label">Tần suất</span><span class="tpl-field-val">Mỗi sprint / release</span></div>
+          <div class="tpl-field"><span class="tpl-field-label">Người gửi</span><span class="tpl-field-val">Product Manager → CS Team</span></div>
+          <div class="tpl-field"><span class="tpl-field-label">Format</span><span class="tpl-field-val">Email + Slack + Notion</span></div>
+        </div>
+      </div>
+
+      <div class="tpl-card" onclick="openModal('adoption_brief')">
+        <div class="tpl-top">
+          <div class="tpl-tag" style="background:var(--purple-l);color:var(--purple);">PRODUCT → CS · Mỗi launch</div>
+          <div class="tpl-title">Feature Adoption Brief</div>
+          <div class="tpl-desc">Hướng dẫn CS cách push tính năng mới tới từng nhóm khách hàng</div>
+        </div>
+        <div class="tpl-body">
+          <div class="tpl-field"><span class="tpl-field-label">Tần suất</span><span class="tpl-field-val">Mỗi lần ra tính năng lớn</span></div>
+          <div class="tpl-field"><span class="tpl-field-label">Người gửi</span><span class="tpl-field-val">Product → CS + Marketing</span></div>
+          <div class="tpl-field"><span class="tpl-field-label">Format</span><span class="tpl-field-val">Slide deck + script</span></div>
+        </div>
+      </div>
+
+      <div class="tpl-card" onclick="openModal('save_plan')">
+        <div class="tpl-top">
+          <div class="tpl-tag" style="background:var(--red-l);color:var(--red);">CS · Khi risk cao</div>
+          <div class="tpl-title">Save Plan</div>
+          <div class="tpl-desc">Kế hoạch hành động khẩn cấp khi khách hàng có nguy cơ churn cao</div>
+        </div>
+        <div class="tpl-body">
+          <div class="tpl-field"><span class="tpl-field-label">Khi nào dùng</span><span class="tpl-field-val">Health score &lt; 40</span></div>
+          <div class="tpl-field"><span class="tpl-field-label">Người lập</span><span class="tpl-field-val">CS Manager + CSM phụ trách</span></div>
+          <div class="tpl-field"><span class="tpl-field-label">Timeline</span><span class="tpl-field-val">Hoàn thành trong 48h</span></div>
+        </div>
+      </div>
+
+      <div class="tpl-card" onclick="openModal('checkin')">
+        <div class="tpl-top">
+          <div class="tpl-tag" style="background:var(--teal-l);color:var(--teal-d);">CS · Hàng tháng</div>
+          <div class="tpl-title">Check-in định kỳ</div>
+          <div class="tpl-desc">Agenda và câu hỏi chuẩn cho buổi check-in hàng tháng với khách hàng</div>
+        </div>
+        <div class="tpl-body">
+          <div class="tpl-field"><span class="tpl-field-label">Tần suất</span><span class="tpl-field-val">Hàng tháng (30 phút)</span></div>
+          <div class="tpl-field"><span class="tpl-field-label">Người dự</span><span class="tpl-field-val">CSM + Champion KH</span></div>
+          <div class="tpl-field"><span class="tpl-field-label">Format</span><span class="tpl-field-val">Video call + notes</span></div>
+        </div>
+      </div>
+
+      <div class="tpl-card" onclick="openModal('roi_report')">
+        <div class="tpl-top">
+          <div class="tpl-tag" style="background:var(--teal-l);color:var(--teal-d);">CS · Trước renewal</div>
+          <div class="tpl-title">ROI Report</div>
+          <div class="tpl-desc">Báo cáo giá trị mà Allsupa đã mang lại để thuyết phục gia hạn hợp đồng</div>
+        </div>
+        <div class="tpl-body">
+          <div class="tpl-field"><span class="tpl-field-label">Khi nào gửi</span><span class="tpl-field-val">T-45 trước hết hạn</span></div>
+          <div class="tpl-field"><span class="tpl-field-label">Người gửi</span><span class="tpl-field-val">CSM → Decision maker KH</span></div>
+          <div class="tpl-field"><span class="tpl-field-label">Format</span><span class="tpl-field-val">PDF + email tóm tắt</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODAL ══════════════════ -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <h3 id="modal-title"></h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ PAGE: METRICS ══════════════════ -->
+<div id="metrics" class="page">
+  <div class="section">
+    <div class="section-header">
+      <h2>Metrics giải thích</h2>
+      <p>Toàn bộ chỉ số mà CS và Product theo dõi — ý nghĩa, công thức, ngưỡng tốt/xấu và hành động cần làm</p>
+    </div>
+
+    <!-- Health Score callout -->
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:36px;">
+      <div style="font-size:12px;font-weight:500;letter-spacing:.05em;color:var(--ink3);margin-bottom:10px;">TỔNG HỢP · HEALTH SCORE</div>
+      <div style="font-size:14px;color:var(--ink2);line-height:1.7;margin-bottom:16px;">
+        Health Score là chỉ số tổng hợp (0–100) phản ánh "sức khỏe" của mối quan hệ với khách hàng.
+        Được tính từ 4 thành phần bên dưới, dùng để phân loại rủi ro và trigger quy trình Renewal.
+      </div>
+      <div class="health-bar-wrap">
+        <div class="health-bar-track">
+          <div class="health-seg" style="width:40%;background:var(--red);opacity:.8;"></div>
+          <div class="health-seg" style="width:30%;background:var(--amber);opacity:.8;"></div>
+          <div class="health-seg" style="width:30%;background:var(--teal);opacity:.8;"></div>
+        </div>
+        <div class="health-labels">
+          <span>0 — Nguy cơ cao</span>
+          <span>40 — Trung bình</span>
+          <span>70 — Khỏe mạnh</span>
+          <span>100</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        <span class="band band-bad">&lt; 40 → Save Plan</span>
+        <span class="band band-mid">40–70 → Check-in sâu</span>
+        <span class="band band-good">&gt; 70 → Upsell / Fast renew</span>
+      </div>
+    </div>
+
+    <!-- CS Metrics -->
+    <div class="metrics-team-block">
+      <div class="metrics-team-label" style="background:var(--teal-l);color:var(--teal-d);">Customer Success Metrics</div>
+      <div class="metrics-grid">
+
+        <div class="mcard" style="border-top:3px solid var(--teal);">
+          <div class="mcard-top">
+            <div class="mcard-name">NPS</div>
+            <div class="mcard-full">Net Promoter Score</div>
+          </div>
+          <div class="mcard-body">
+            <div class="mcard-def">Đo mức độ khách hàng sẵn sàng giới thiệu Allsupa cho người khác. Hỏi 1 câu duy nhất: <em>"Bạn có sẵn sàng giới thiệu chúng tôi không? (0–10)"</em></div>
+            <div class="mcard-formula">NPS = %Promoters (9–10) − %Detractors (0–6)
+Passives (7–8) không tính vào công thức</div>
+            <div class="mcard-bands">
+              <span class="band band-good">≥ 50 Xuất sắc</span>
+              <span class="band band-mid">30–49 Tốt</span>
+              <span class="band band-bad">&lt; 30 Cần cải thiện</span>
+            </div>
+            <div class="mcard-action"><strong>Khi NPS thấp:</strong> Phỏng vấn Detractors ngay trong 48h để tìm nguyên nhân. Đưa vào Feedback Report gửi Product.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--teal);">
+          <div class="mcard-top">
+            <div class="mcard-name">CSAT</div>
+            <div class="mcard-full">Customer Satisfaction Score</div>
+          </div>
+          <div class="mcard-body">
+            <div class="mcard-def">Đo mức độ hài lòng tức thời sau một tương tác cụ thể (support ticket, onboarding, check-in). Khác NPS ở chỗ CSAT đo từng điểm tiếp xúc, không đo tổng thể.</div>
+            <div class="mcard-formula">CSAT = (Số phản hồi Hài lòng / Tổng phản hồi) × 100%</div>
+            <div class="mcard-bands">
+              <span class="band band-good">≥ 85% Tốt</span>
+              <span class="band band-mid">70–84% Ổn</span>
+              <span class="band band-bad">&lt; 70% Cần xem lại</span>
+            </div>
+            <div class="mcard-action"><strong>Khi CSAT thấp:</strong> Review lại quy trình support hoặc nội dung onboarding. Xem ticket nào nhận điểm thấp nhất.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--teal);">
+          <div class="mcard-top">
+            <div class="mcard-name">Churn Rate</div>
+            <div class="mcard-full">Tỷ lệ khách hàng rời bỏ</div>
+          </div>
+          <div class="mcard-body">
+            <div class="mcard-def">Phần trăm khách hàng (hoặc doanh thu) bị mất đi trong một khoảng thời gian nhất định. Là chỉ số sức khỏe quan trọng nhất của một SaaS.</div>
+            <div class="mcard-formula">Churn Rate = (KH mất trong tháng / KH đầu tháng) × 100%
+
+MRR Churn Rate = (MRR mất / MRR đầu tháng) × 100%</div>
+            <div class="mcard-bands">
+              <span class="band band-good">&lt; 2%/tháng Tốt</span>
+              <span class="band band-mid">2–5% Cần chú ý</span>
+              <span class="band band-bad">&gt; 5% Nguy hiểm</span>
+            </div>
+            <div class="mcard-action"><strong>Chú ý:</strong> Phân biệt Voluntary Churn (KH chủ động hủy) vs Involuntary Churn (hết hạn thẻ, thanh toán lỗi). Cách xử lý khác nhau.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--teal);">
+          <div class="mcard-top">
+            <div class="mcard-name">Health Score</div>
+            <div class="mcard-full">Điểm sức khỏe khách hàng</div>
+          </div>
+          <div class="mcard-body">
+            <div class="mcard-def">Chỉ số tổng hợp (0–100) tính từ 4 tín hiệu hành vi của khách hàng. Dùng để phát hiện sớm nguy cơ churn trước khi KH có ý định rời bỏ.</div>
+            <div class="mcard-formula">Health Score = 
+  (Login frequency × 30%)
++ (Feature adoption × 30%)
++ (NPS điểm gần nhất × 20%)
++ (Support tickets × 20%)</div>
+            <div class="mcard-bands">
+              <span class="band band-good">&gt; 70 Khỏe</span>
+              <span class="band band-mid">40–70 Trung bình</span>
+              <span class="band band-bad">&lt; 40 Nguy cơ</span>
+            </div>
+            <div class="mcard-action"><strong>Review:</strong> Cập nhật hàng tuần. Khi giảm &gt;15 điểm trong 1 tuần → alert ngay cho CS Manager.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--teal);">
+          <div class="mcard-top">
+            <div class="mcard-name">Feature Adoption Rate</div>
+            <div class="mcard-full">Tỷ lệ sử dụng tính năng</div>
+          </div>
+          <div class="mcard-body">
+            <div class="mcard-def">Phần trăm users (hoặc KH) đã dùng một tính năng cụ thể ít nhất một lần trong khoảng thời gian đo. Dùng để đánh giá mức độ KH khai thác giá trị của Allsupa.</div>
+            <div class="mcard-formula">Adoption Rate = (Users đã dùng tính năng X / Tổng users active) × 100%</div>
+            <div class="mcard-bands">
+              <span class="band band-good">≥ 60% Tốt</span>
+              <span class="band band-mid">30–59% Ổn</span>
+              <span class="band band-bad">&lt; 30% Cần push</span>
+            </div>
+            <div class="mcard-action"><strong>Khi thấp:</strong> CS chủ động demo lại tính năng trong buổi check-in, gửi video hướng dẫn. Báo Product nếu nhiều KH không dùng.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--teal);">
+          <div class="mcard-top">
+            <div class="mcard-name">Renewal Rate</div>
+            <div class="mcard-full">Tỷ lệ gia hạn hợp đồng</div>
+          </div>
+          <div class="mcard-body">
+            <div class="mcard-def">Phần trăm khách hàng đủ điều kiện gia hạn đã thực sự gia hạn trong kỳ. Có thể tính theo số lượng KH (Logo Renewal) hoặc theo doanh thu (Net Revenue Retention).</div>
+            <div class="mcard-formula">Logo Renewal = (KH gia hạn / KH đến hạn) × 100%
+
+NRR = (MRR cuối kỳ gồm upsell / MRR đầu kỳ) × 100%</div>
+            <div class="mcard-bands">
+              <span class="band band-good">NRR ≥ 110% Xuất sắc</span>
+              <span class="band band-mid">90–109% Ổn</span>
+              <span class="band band-bad">&lt; 90% Nguy hiểm</span>
+            </div>
+            <div class="mcard-action"><strong>Mục tiêu:</strong> NRR &gt; 100% có nghĩa doanh thu từ KH cũ tăng trưởng dù có churn — đây là dấu hiệu expansion tốt.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--teal);">
+          <div class="mcard-top">
+            <div class="mcard-name">Time-to-Value (TTV)</div>
+            <div class="mcard-full">Thời gian đạt giá trị đầu tiên</div>
+          </div>
+          <div class="mcard-body">
+            <div class="mcard-def">Thời gian tính từ khi KH ký hợp đồng đến khi họ đạt được "aha moment" — tức là lần đầu tiên cảm nhận rõ giá trị của Allsupa. TTV ngắn → onboarding tốt → khả năng giữ KH cao hơn.</div>
+            <div class="mcard-formula">TTV = Ngày đạt first value − Ngày ký hợp đồng
+
+"First value" = lần đầu hoàn thành use case cốt lõi</div>
+            <div class="mcard-bands">
+              <span class="band band-good">&lt; 7 ngày Tốt</span>
+              <span class="band band-mid">7–14 ngày Ổn</span>
+              <span class="band band-bad">&gt; 14 ngày Cần cải thiện</span>
+            </div>
+            <div class="mcard-action"><strong>Khi TTV dài:</strong> Review lại flow onboarding, xem KH đang bị chặn ở bước nào. Có thể cần thêm guided tour hoặc session 1-1.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Product Metrics -->
+    <div class="metrics-team-block">
+      <div class="metrics-team-label" style="background:var(--purple-l);color:var(--purple-d);">Product Metrics</div>
+      <div class="metrics-grid">
+
+        <div class="mcard" style="border-top:3px solid var(--purple);">
+          <div class="mcard-top">
+            <div class="mcard-name">DAU / WAU / MAU</div>
+            <div class="mcard-full">Daily / Weekly / Monthly Active Users</div>
+          </div>
+          <div class="mcard-body">
+            <div class="mcard-def">Số lượng users có ít nhất 1 hành động có ý nghĩa trong ngày/tuần/tháng. "Active" phải được định nghĩa cụ thể (không chỉ là login — cần có action thực sự).</div>
+            <div class="mcard-formula">DAU/MAU Ratio = DAU / MAU × 100%
+→ Đo mức độ "sticky" của sản phẩm
+
+Ví dụ: 200 DAU / 1000 MAU = 20% stickiness</div>
+            <div class="mcard-bands">
+              <span class="band band-good">DAU/MAU ≥ 20% Tốt</span>
+              <span class="band band-mid">10–19% Trung bình</span>
+              <span class="band band-bad">&lt; 10% Lo ngại</span>
+            </div>
+            <div class="mcard-action"><strong>Chú ý:</strong> Đừng đếm login là "active". Định nghĩa action cốt lõi của Allsupa và chỉ tính event đó.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--purple);">
+          <div class="mcard-top">
+            <div class="mcard-name">Retention Rate</div>
+            <div class="mcard-full">Tỷ lệ giữ chân người dùng</div>
+          </div>
+          <div class="mcard-body">
+            <div class="mcard-def">Phần trăm users vẫn còn active sau N ngày kể từ lần đầu dùng sản phẩm. Thường đo ở D1, D7, D30. Là chỉ số quan trọng nhất để đánh giá product-market fit.</div>
+            <div class="mcard-formula">D30 Retention = (Users active ngày 30 / Users signup) × 100%
+
+Cohort analysis: nhóm users theo tuần/tháng đăng ký</div>
+            <div class="mcard-bands">
+              <span class="band band-good">D30 ≥ 40% Tốt (B2B SaaS)</span>
+              <span class="band band-mid">25–39% Ổn</span>
+              <span class="band band-bad">&lt; 25% Cần cải thiện</span>
+            </div>
+            <div class="mcard-action"><strong>Khi thấp:</strong> Phân tích drop-off xảy ra ở bước nào. Thường D1 thấp = vấn đề onboarding; D30 thấp = vấn đề core value.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--purple);">
+          <div class="mcard-top">
+            <div class="mcard-name">A/B Test Win Rate</div>
+            <div class="mcard-full">Tỷ lệ thử nghiệm thành công</div>
+          </div>
+          <div class="mcard-body">
+            <div class="mcard-def">Phần trăm các thử nghiệm A/B cho kết quả dương tính (variant thắng control). Dùng để đánh giá chất lượng của quá trình ra quyết định và discovery của Product team.</div>
+            <div class="mcard-formula">Win Rate = (Số test thắng / Tổng test chạy) × 100%
+
+"Thắng" = metric chính cải thiện với p-value &lt; 0.05</div>
+            <div class="mcard-bands">
+              <span class="band band-good">30–50% Lý tưởng</span>
+              <span class="band band-info">&gt; 70% Quá cao — test dễ?</span>
+              <span class="band band-bad">&lt; 20% Discovery yếu</span>
+            </div>
+            <div class="mcard-action"><strong>Lưu ý:</strong> Win rate 100% thường là dấu hiệu team không thử nghiệm những ý tưởng đủ táo bạo. Thất bại là học hỏi.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--purple);">
+          <div class="mcard-top">
+            <div class="mcard-name">Feature Adoption Rate</div>
+            <div class="mcard-full">Tỷ lệ dùng tính năng mới (góc Product)</div>
+          </div>
+          <div class="mcard-body">
+            <div class="mcard-def">Product theo dõi adoption của từng tính năng sau launch để đánh giá xem tính năng có đáp ứng nhu cầu thực sự không, từ đó quyết định iterate hay kill.</div>
+            <div class="mcard-formula">D30 Adoption = Users dùng tính năng ít nhất 1× trong 30 ngày / Eligible users × 100%
+
+D30 Retention of feature = Users dùng lại lần 2+ / Users dùng lần 1</div>
+            <div class="mcard-bands">
+              <span class="band band-good">D30 ≥ 40% Tốt</span>
+              <span class="band band-mid">20–39% Iterate thêm</span>
+              <span class="band band-bad">&lt; 20% Xem xét lại</span>
+            </div>
+            <div class="mcard-action"><strong>Quy trình:</strong> Báo cáo D7, D30, D90 sau mỗi launch. Kết hợp với CS feedback để hiểu nguyên nhân adoption thấp/cao.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--purple);">
+          <div class="mcard-top">
+            <div class="mcard-name">MRR / ARR</div>
+            <div class="mcard-full">Monthly / Annual Recurring Revenue</div>
+          </div>
+          <div class="mcard-body">
+            <div class="mcard-def">Doanh thu định kỳ hàng tháng/năm từ các hợp đồng đang hoạt động. Là chỉ số tài chính cốt lõi của mọi SaaS, phản ánh quy mô và tốc độ tăng trưởng thực sự.</div>
+            <div class="mcard-formula">MRR = Tổng giá trị HĐ active / Số tháng HĐ
+ARR = MRR × 12
+
+New MRR + Expansion MRR − Churned MRR = Net MRR</div>
+            <div class="mcard-bands">
+              <span class="band band-good">MRR growth ≥ 10%/tháng</span>
+              <span class="band band-mid">5–9%/tháng Ổn</span>
+              <span class="band band-bad">&lt; 5%/tháng Chậm</span>
+            </div>
+            <div class="mcard-action"><strong>Breakdown MRR:</strong> Phân tách New MRR (KH mới), Expansion MRR (upsell), Churned MRR (mất đi) để hiểu động lực tăng trưởng.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--purple);">
+          <div class="mcard-top">
+            <div class="mcard-name">Time-to-Value (Product side)</div>
+            <div class="mcard-full">Thời gian KH đạt giá trị — góc nhìn Product</div>
+          </div>
+          <div class="mcard-body">
+            <div class="mcard-def">Product đo TTV để xác định xem flow onboarding trong sản phẩm có đưa KH đến "aha moment" đủ nhanh không. Khác với TTV của CS là đo trải nghiệm kỹ thuật/UX, không phải quan hệ.</div>
+            <div class="mcard-formula">In-product TTV = Thời gian từ signup đến hoàn thành first key action
+(đo bằng event tracking, không phải survey)</div>
+            <div class="mcard-bands">
+              <span class="band band-good">&lt; 10 phút Lý tưởng</span>
+              <span class="band band-mid">10–30 phút Ổn</span>
+              <span class="band band-bad">&gt; 30 phút Cần cải thiện UX</span>
+            </div>
+            <div class="mcard-action"><strong>Cải thiện:</strong> Rút ngắn số bước setup, thêm guided tour, empty state hữu ích, template có sẵn. Mỗi bước giảm → TTV ngắn hơn.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--purple);">
+          <div class="mcard-top">
+            <div class="mcard-name">NPS (Product side)</div>
+            <div class="mcard-full">Net Promoter Score — phân tích theo tính năng</div>
+          </div>
+          <div class="mcard-body">
+            <div class="mcard-def">Product dùng NPS segment theo cohort (KH dùng tính năng A vs không dùng) để xác định tính năng nào thực sự tạo ra fans và tính năng nào không ảnh hưởng đến loyalty.</div>
+            <div class="mcard-formula">NPS by feature cohort:
+– Users dùng Feature X: NPS = +65
+– Users không dùng: NPS = +30
+→ Feature X có tương quan mạnh với loyalty</div>
+            <div class="mcard-bands">
+              <span class="band band-good">Delta ≥ 20 Tính năng có impact</span>
+              <span class="band band-info">Delta &lt; 5 Tính năng trung tính</span>
+            </div>
+            <div class="mcard-action"><strong>Ứng dụng:</strong> Ưu tiên push adoption của tính năng có NPS delta cao. Kết hợp với CS để đưa KH có NPS thấp dùng đúng tính năng này.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Sales Metrics -->
+    <div class="metrics-team-block">
+      <div class="metrics-team-label" style="background:var(--coral-l);color:var(--coral-d);">Sales Metrics</div>
+      <div class="metrics-grid">
+
+        <div class="mcard" style="border-top:3px solid var(--coral);">
+          <div class="mcard-top"><div class="mcard-name">Win Rate</div><div class="mcard-full">Tỷ lệ chốt deal thành công</div></div>
+          <div class="mcard-body">
+            <div class="mcard-def">Phần trăm cơ hội (opportunity) trong pipeline kết thúc bằng Closed Won. Là thước đo hiệu quả bán hàng cốt lõi nhất của một AE.</div>
+            <div class="mcard-formula">Win Rate = (Closed Won / Tổng cơ hội đã kết thúc) × 100%
+Tính trên cả số lượng deal lẫn giá trị (MRR)</div>
+            <div class="mcard-bands">
+              <span class="band band-good">≥ 25% Tốt (B2B SaaS)</span>
+              <span class="band band-mid">15–24% Ổn</span>
+              <span class="band band-bad">&lt; 15% Cần cải thiện</span>
+            </div>
+            <div class="mcard-action"><strong>Khi thấp:</strong> Phân tích lý do lost (giá, tính năng, đối thủ, timing). Review lại quy trình qualify và demo.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--coral);">
+          <div class="mcard-top"><div class="mcard-name">Sales Cycle Length</div><div class="mcard-full">Độ dài chu kỳ bán hàng</div></div>
+          <div class="mcard-body">
+            <div class="mcard-def">Số ngày trung bình từ khi một lead trở thành cơ hội (SQL) đến khi ký hợp đồng. Chu kỳ ngắn hơn = cash flow tốt hơn và đội Sales hiệu quả hơn.</div>
+            <div class="mcard-formula">Sales Cycle = Ngày Closed Won − Ngày tạo Opportunity
+Tính trung bình trên tất cả Closed Won trong kỳ</div>
+            <div class="mcard-bands">
+              <span class="band band-good">&lt; 30 ngày Nhanh</span>
+              <span class="band band-mid">30–60 ngày Bình thường</span>
+              <span class="band band-bad">&gt; 60 ngày Cần tối ưu</span>
+            </div>
+            <div class="mcard-action"><strong>Rút ngắn cycle:</strong> Qualify kỹ hơn ở đầu phễu, chuẩn bị proposal nhanh trong 24h, xác định decision maker sớm.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--coral);">
+          <div class="mcard-top"><div class="mcard-name">ACV / Deal Size</div><div class="mcard-full">Annual Contract Value — Giá trị hợp đồng năm</div></div>
+          <div class="mcard-body">
+            <div class="mcard-def">Giá trị trung bình của một hợp đồng trong một năm. Theo dõi ACV giúp xác định xem Sales đang nhắm đúng phân khúc KH mục tiêu không và cần tối ưu pricing hay không.</div>
+            <div class="mcard-formula">ACV = Tổng giá trị HĐ năm / Số deal
+(Loại bỏ phí one-time, chỉ tính phần recurring)</div>
+            <div class="mcard-bands">
+              <span class="band band-info">Mục tiêu ACV theo plan tự định nghĩa</span>
+            </div>
+            <div class="mcard-action"><strong>Nếu ACV thấp hơn mục tiêu:</strong> Xem lại ICP, chất lượng lead từ Marketing, hoặc khả năng upsell trong quá trình demo.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--coral);">
+          <div class="mcard-top"><div class="mcard-name">Pipeline Coverage</div><div class="mcard-full">Độ phủ pipeline so với quota</div></div>
+          <div class="mcard-body">
+            <div class="mcard-def">Tổng giá trị pipeline hiện tại so với quota cần đạt trong kỳ. Đảm bảo Sales có đủ "nguyên liệu" để hit target dù win rate không đạt 100%.</div>
+            <div class="mcard-formula">Pipeline Coverage = Tổng giá trị pipeline / Quota kỳ này
+Ví dụ: Pipeline 3 tỷ / Quota 1 tỷ = 3x coverage</div>
+            <div class="mcard-bands">
+              <span class="band band-good">≥ 3x Đủ an toàn</span>
+              <span class="band band-mid">2–3x Cần thêm pipeline</span>
+              <span class="band band-bad">&lt; 2x Nguy hiểm</span>
+            </div>
+            <div class="mcard-action"><strong>Khi coverage thấp:</strong> Sales tăng outbound, Marketing tăng demand gen, review cơ hội đang stagnant để push hoặc disqualify.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--coral);">
+          <div class="mcard-top"><div class="mcard-name">Quota Attainment</div><div class="mcard-full">Tỷ lệ đạt chỉ tiêu doanh thu</div></div>
+          <div class="mcard-body">
+            <div class="mcard-def">Phần trăm doanh thu (ARR/MRR mới) thực tế đạt được so với chỉ tiêu đã đặt ra. Đo ở cấp độ cá nhân (AE) và cả team Sales.</div>
+            <div class="mcard-formula">Attainment = (Actual ARR won / Quota) × 100%
+Tính theo tháng, quý và năm</div>
+            <div class="mcard-bands">
+              <span class="band band-good">≥ 100% Đạt quota</span>
+              <span class="band band-mid">80–99% Gần đạt</span>
+              <span class="band band-bad">&lt; 80% Cần hỗ trợ</span>
+            </div>
+            <div class="mcard-action"><strong>Attainment team thấp:</strong> Kiểm tra chất lượng pipeline, kỹ năng demo/closing của AE, hoặc review lại quota có thực tế không.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Marketing Metrics -->
+    <div class="metrics-team-block">
+      <div class="metrics-team-label" style="background:var(--blue-l);color:var(--blue-d);">Marketing Metrics</div>
+      <div class="metrics-grid">
+
+        <div class="mcard" style="border-top:3px solid var(--blue);">
+          <div class="mcard-top"><div class="mcard-name">MQL Volume</div><div class="mcard-full">Số lượng Marketing Qualified Leads</div></div>
+          <div class="mcard-body">
+            <div class="mcard-def">Số lượng leads đạt ngưỡng MQL trong một kỳ. Là chỉ số đầu ra quan trọng nhất của Marketing — đảm bảo Sales có đủ nguyên liệu để làm việc.</div>
+            <div class="mcard-formula">MQL Volume = Số leads đạt score ≥ ngưỡng MQL + khớp ICP
+Đo hàng tuần và hàng tháng theo từng channel</div>
+            <div class="mcard-bands">
+              <span class="band band-info">Target: tự định nghĩa theo quota Sales</span>
+            </div>
+            <div class="mcard-action"><strong>Quy tắc ngón tay cái:</strong> MQL volume cần đủ để Sales fill pipeline 3x quota. Nếu win rate 25% và pipeline cần 3x → MQL cần ≥ 12x quota về số lượng.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--blue);">
+          <div class="mcard-top"><div class="mcard-name">CAC</div><div class="mcard-full">Customer Acquisition Cost — Chi phí thu hút 1 KH mới</div></div>
+          <div class="mcard-body">
+            <div class="mcard-def">Tổng chi phí Sales và Marketing bỏ ra để có được một khách hàng mới. Cần so sánh với LTV (giá trị vòng đời KH) để đánh giá hiệu quả.</div>
+            <div class="mcard-formula">CAC = (Tổng chi phí Sales + Marketing) / Số KH mới
+Tính theo tháng hoặc quý</div>
+            <div class="mcard-bands">
+              <span class="band band-good">LTV/CAC ≥ 3x Bền vững</span>
+              <span class="band band-mid">2–3x Ổn nhưng cần tối ưu</span>
+              <span class="band band-bad">&lt; 2x Không bền vững</span>
+            </div>
+            <div class="mcard-action"><strong>Giảm CAC:</strong> Tối ưu kênh có CPL thấp nhất, cải thiện conversion rate website, tăng tỷ lệ inbound organic (SEO, referral).</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--blue);">
+          <div class="mcard-top"><div class="mcard-name">MQL → SQL Rate</div><div class="mcard-full">Tỷ lệ chuyển đổi MQL thành SQL</div></div>
+          <div class="mcard-body">
+            <div class="mcard-def">Phần trăm MQL mà Sales qualify thành công thành SQL. Chỉ số này phản ánh chất lượng lead mà Marketing gửi sang — MQL tốt = Sales qualify dễ hơn.</div>
+            <div class="mcard-formula">MQL→SQL Rate = (Số SQL / Số MQL nhận) × 100%
+Cần Sales update CRM sau mỗi lần tiếp cận MQL</div>
+            <div class="mcard-bands">
+              <span class="band band-good">≥ 60% ICP định nghĩa tốt</span>
+              <span class="band band-mid">40–59% Cần tinh chỉnh ICP</span>
+              <span class="band band-bad">&lt; 40% Lead quality thấp</span>
+            </div>
+            <div class="mcard-action"><strong>Khi rate thấp:</strong> Họp Sales-Marketing để review ICP, xem lead nào bị reject và lý do. Điều chỉnh lại lead scoring hoặc targeting.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--blue);">
+          <div class="mcard-top"><div class="mcard-name">CPL theo kênh</div><div class="mcard-full">Cost per Lead — Chi phí mỗi lead theo kênh</div></div>
+          <div class="mcard-body">
+            <div class="mcard-def">Chi phí trung bình để tạo ra một lead từ một kênh cụ thể (Google Ads, LinkedIn, SEO, Events...). Dùng để tối ưu phân bổ ngân sách Marketing.</div>
+            <div class="mcard-formula">CPL = Tổng chi phí kênh / Số leads từ kênh đó
+So sánh CPL vs chất lượng lead (MQL rate) từng kênh</div>
+            <div class="mcard-bands">
+              <span class="band band-info">Không có ngưỡng chung — so sánh giữa các kênh</span>
+            </div>
+            <div class="mcard-action"><strong>Đúng cách đo:</strong> Không chỉ nhìn CPL mà phải nhân với MQL rate và Win rate → Cost per Customer theo kênh mới là số quyết định ngân sách.</div>
+          </div>
+        </div>
+
+        <div class="mcard" style="border-top:3px solid var(--blue);">
+          <div class="mcard-top"><div class="mcard-name">Organic Traffic</div><div class="mcard-full">Lượng truy cập tự nhiên từ SEO & Brand</div></div>
+          <div class="mcard-body">
+            <div class="mcard-def">Số lượt truy cập website đến từ kênh organic (Google Search, direct, referral) — không phải từ quảng cáo trả phí. Organic traffic cao = thương hiệu mạnh và SEO tốt, giúp giảm CAC dài hạn.</div>
+            <div class="mcard-formula">Organic Growth = (Traffic tháng này − tháng trước) / Traffic tháng trước × 100%
+Theo dõi: organic sessions, keyword rankings, backlinks</div>
+            <div class="mcard-bands">
+              <span class="band band-good">≥ 10%/tháng Tốt</span>
+              <span class="band band-mid">5–9% Ổn</span>
+              <span class="band band-bad">&lt; 5% Cần đầu tư SEO/Content</span>
+            </div>
+            <div class="mcard-action"><strong>Tăng organic:</strong> Đăng bài blog theo cụm từ khóa (topic cluster), xây dựng backlinks, tối ưu tốc độ trang và Core Web Vitals.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Quick Reference Table -->
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-top:8px;">
+      <div style="padding:14px 20px;border-bottom:1px solid var(--border);font-size:12px;font-weight:500;letter-spacing:.05em;color:var(--ink3);display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        BẢNG TRA NHANH — AI ĐO CÁI GÌ
+        <span style="background:var(--teal-l);color:var(--teal-d);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;">CS</span>
+        <span style="background:var(--purple-l);color:var(--purple-d);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;">Product</span>
+        <span style="background:var(--coral-l);color:var(--coral-d);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;">Sales</span>
+        <span style="background:var(--blue-l);color:var(--blue-d);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;">Marketing</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:var(--surface);">
+              <th style="padding:10px 16px;text-align:left;font-weight:500;color:var(--ink2);border-bottom:1px solid var(--border);">Chỉ số</th>
+              <th style="padding:10px 16px;text-align:left;font-weight:500;color:var(--ink2);border-bottom:1px solid var(--border);">Team</th>
+              <th style="padding:10px 16px;text-align:left;font-weight:500;color:var(--ink2);border-bottom:1px solid var(--border);">Tần suất</th>
+              <th style="padding:10px 16px;text-align:left;font-weight:500;color:var(--ink2);border-bottom:1px solid var(--border);">Nguồn dữ liệu</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">NPS</td>
+              <td style="padding:9px 16px;"><span style="background:var(--teal-l);color:var(--teal-d);font-size:11px;padding:2px 8px;border-radius:20px;">CS</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng quý</td>
+              <td style="padding:9px 16px;color:var(--ink3);">Survey tự động (Typeform / in-app)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">CSAT</td>
+              <td style="padding:9px 16px;"><span style="background:var(--teal-l);color:var(--teal-d);font-size:11px;padding:2px 8px;border-radius:20px;">CS</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Sau mỗi tương tác</td>
+              <td style="padding:9px 16px;color:var(--ink3);">Helpdesk (Intercom / Zendesk)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">Churn Rate</td>
+              <td style="padding:9px 16px;"><span style="background:var(--teal-l);color:var(--teal-d);font-size:11px;padding:2px 8px;border-radius:20px;">CS</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng tháng</td>
+              <td style="padding:9px 16px;color:var(--ink3);">CRM / Billing system</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">Health Score</td>
+              <td style="padding:9px 16px;"><span style="background:var(--teal-l);color:var(--teal-d);font-size:11px;padding:2px 8px;border-radius:20px;">CS</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng tuần</td>
+              <td style="padding:9px 16px;color:var(--ink3);">Tổng hợp từ product analytics + CRM</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">TTV (CS)</td>
+              <td style="padding:9px 16px;"><span style="background:var(--teal-l);color:var(--teal-d);font-size:11px;padding:2px 8px;border-radius:20px;">CS</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Từng KH mới</td>
+              <td style="padding:9px 16px;color:var(--ink3);">CRM tracking + check-in notes</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">DAU / WAU / MAU</td>
+              <td style="padding:9px 16px;"><span style="background:var(--purple-l);color:var(--purple-d);font-size:11px;padding:2px 8px;border-radius:20px;">Product</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng ngày / tuần</td>
+              <td style="padding:9px 16px;color:var(--ink3);">Product analytics (Mixpanel / Amplitude)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">Retention</td>
+              <td style="padding:9px 16px;"><span style="background:var(--purple-l);color:var(--purple-d);font-size:11px;padding:2px 8px;border-radius:20px;">Product</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng tháng (cohort)</td>
+              <td style="padding:9px 16px;color:var(--ink3);">Product analytics</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">Feature Adoption</td>
+              <td style="padding:9px 16px;"><span style="background:var(--purple-l);color:var(--purple-d);font-size:11px;padding:2px 8px;border-radius:20px;">Product</span> <span style="background:var(--teal-l);color:var(--teal-d);font-size:11px;padding:2px 8px;border-radius:20px;">CS</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Sau mỗi launch (D7, D30)</td>
+              <td style="padding:9px 16px;color:var(--ink3);">Product analytics</td>
+            </tr>
+            <tr>
+              <td style="padding:9px 16px;font-weight:500;">MRR / ARR</td>
+              <td style="padding:9px 16px;"><span style="background:var(--purple-l);color:var(--purple-d);font-size:11px;padding:2px 8px;border-radius:20px;">Product</span> <span style="background:var(--teal-l);color:var(--teal-d);font-size:11px;padding:2px 8px;border-radius:20px;">CS</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng tháng</td>
+              <td style="padding:9px 16px;color:var(--ink3);">Billing / Stripe / CRM</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">Win Rate</td>
+              <td style="padding:9px 16px;"><span style="background:var(--coral-l);color:var(--coral-d);font-size:11px;padding:2px 8px;border-radius:20px;">Sales</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng tuần / tháng</td>
+              <td style="padding:9px 16px;color:var(--ink3);">CRM (HubSpot / Salesforce)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">Sales Cycle</td>
+              <td style="padding:9px 16px;"><span style="background:var(--coral-l);color:var(--coral-d);font-size:11px;padding:2px 8px;border-radius:20px;">Sales</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng tháng</td>
+              <td style="padding:9px 16px;color:var(--ink3);">CRM — ngày tạo vs ngày close</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">ACV / Deal Size</td>
+              <td style="padding:9px 16px;"><span style="background:var(--coral-l);color:var(--coral-d);font-size:11px;padding:2px 8px;border-radius:20px;">Sales</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng tháng / quý</td>
+              <td style="padding:9px 16px;color:var(--ink3);">CRM / Billing</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">Pipeline Coverage</td>
+              <td style="padding:9px 16px;"><span style="background:var(--coral-l);color:var(--coral-d);font-size:11px;padding:2px 8px;border-radius:20px;">Sales</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng tuần</td>
+              <td style="padding:9px 16px;color:var(--ink3);">CRM pipeline report</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">MQL Volume</td>
+              <td style="padding:9px 16px;"><span style="background:var(--blue-l);color:var(--blue-d);font-size:11px;padding:2px 8px;border-radius:20px;">Marketing</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng tuần / tháng</td>
+              <td style="padding:9px 16px;color:var(--ink3);">CRM + Marketing automation</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">CAC</td>
+              <td style="padding:9px 16px;"><span style="background:var(--blue-l);color:var(--blue-d);font-size:11px;padding:2px 8px;border-radius:20px;">Marketing</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng tháng / quý</td>
+              <td style="padding:9px 16px;color:var(--ink3);">Finance + CRM + Ad spend</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">MQL → SQL Rate</td>
+              <td style="padding:9px 16px;"><span style="background:var(--blue-l);color:var(--blue-d);font-size:11px;padding:2px 8px;border-radius:20px;">Marketing</span> <span style="background:var(--coral-l);color:var(--coral-d);font-size:11px;padding:2px 8px;border-radius:20px;">Sales</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng tháng</td>
+              <td style="padding:9px 16px;color:var(--ink3);">CRM — cần Sales update kết quả</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:9px 16px;font-weight:500;">CPL theo kênh</td>
+              <td style="padding:9px 16px;"><span style="background:var(--blue-l);color:var(--blue-d);font-size:11px;padding:2px 8px;border-radius:20px;">Marketing</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng tuần</td>
+              <td style="padding:9px 16px;color:var(--ink3);">Google Ads / LinkedIn / UTM tracking</td>
+            </tr>
+            <tr>
+              <td style="padding:9px 16px;font-weight:500;">Organic Traffic</td>
+              <td style="padding:9px 16px;"><span style="background:var(--blue-l);color:var(--blue-d);font-size:11px;padding:2px 8px;border-radius:20px;">Marketing</span></td>
+              <td style="padding:9px 16px;color:var(--ink3);">Hàng tuần</td>
+              <td style="padding:9px 16px;color:var(--ink3);">Google Analytics / Search Console</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════ PAGE: DAILY TASKS ══════════════════ -->
+<div id="dailytasks" class="page">
+<div class="section">
+<div class="section-header">
+  <h2>Công việc hàng ngày</h2>
+  <p>Chọn phòng ban và vị trí để xem daily checklist, lịch tuần và gợi ý ưu tiên</p>
+</div>
+
+<div class="dt-layout">
+
+  <!-- Sidebar: chọn phòng ban -->
+  <div class="dt-sidebar">
+    <div style="font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--ink3);margin-bottom:10px;">PHÒNG BAN</div>
+    <button class="dt-dept-btn active" id="btn-cs" onclick="switchDept('cs')" style="background:var(--teal);">
+      <div class="dt-dept-dot" style="background:#fff;"></div> Customer Success
+    </button>
+    <button class="dt-dept-btn" id="btn-product" onclick="switchDept('product')">
+      <div class="dt-dept-dot" style="background:var(--purple);"></div> Product
+    </button>
+    <button class="dt-dept-btn" id="btn-sales" onclick="switchDept('sales')">
+      <div class="dt-dept-dot" style="background:var(--coral);"></div> Sales
+    </button>
+    <button class="dt-dept-btn" id="btn-marketing" onclick="switchDept('marketing')">
+      <div class="dt-dept-dot" style="background:var(--blue);"></div> Marketing
+    </button>
+  </div>
+
+  <!-- Main content -->
+  <div>
+
+    <!-- ══ CS ══ -->
+    <div class="dt-content active" id="dept-cs">
+      <div class="dt-role-tabs">
+        <button class="dt-role-tab active" onclick="switchRole(this,'cs-csm')" style="background:var(--teal);border-color:var(--teal);">CSM (Customer Success Manager)</button>
+        <button class="dt-role-tab" onclick="switchRole(this,'cs-lead')">CS Lead / Manager</button>
+        <button class="dt-role-tab" onclick="switchRole(this,'cs-onboard')">Onboarding Specialist</button>
+      </div>
+
+      <!-- CSM -->
+      <div class="dt-content active" id="cs-csm">
+        <div style="font-size:12px;font-weight:500;color:var(--teal-d);margin-bottom:14px;padding:8px 12px;background:var(--teal-l);border-radius:8px;">
+          CSM · Chịu trách nhiệm mối quan hệ dài hạn với 15–25 tài khoản, đảm bảo KH đạt giá trị và gia hạn hợp đồng
+        </div>
+        <div class="dt-period-grid">
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--teal-l);color:var(--teal-d);">
+              <span>☀️</span> SÁNG — Mỗi ngày (8:30–10:00)
+            </div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Đọc email & Slack — phân loại urgent vs non-urgent</div><span class="dt-tag" style="background:var(--red-l);color:var(--red);">urgent</span></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review health score dashboard — flag KH có score giảm</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Xem support tickets mới từ portfolio KH của mình</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Chuẩn bị nội dung cho các cuộc họp trong ngày</div></div>
+            </div>
+          </div>
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--teal-l);color:var(--teal-d);">
+              <span>🌤</span> CHIỀU — Mỗi ngày (14:00–17:30)
+            </div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Cập nhật CRM sau mỗi cuộc gọi / email với KH</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Follow-up các action item từ check-in gần nhất</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Ghi nhận feedback, feature request vào tracker</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Chuẩn bị agenda cho check-in ngày mai (nếu có)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Xử lý xong ít nhất 80% inbox trước 18:00</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--ink3);margin-bottom:10px;">LỊCH TUẦN CHUẨN</div>
+        <div class="dt-weekly-row">
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--teal-l);color:var(--teal-d);">THỨ 2</div><div class="dt-day-body"><div class="dt-day-task">Team standup CS (15 phút)</div><div class="dt-day-task">Review KH sắp đến hạn renewal</div><div class="dt-day-task">Check-in calls (đã lên lịch)</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--teal-l);color:var(--teal-d);">THỨ 3</div><div class="dt-day-body"><div class="dt-day-task">Check-in calls portfolio</div><div class="dt-day-task">Giải quyết support escalation</div><div class="dt-day-task">Update health score thủ công</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--teal-l);color:var(--teal-d);">THỨ 4</div><div class="dt-day-body"><div class="dt-day-task">Sync CS–Product (30 phút)</div><div class="dt-day-task">Review feedback tracker</div><div class="dt-day-task">Onboarding KH mới (nếu có)</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--teal-l);color:var(--teal-d);">THỨ 5</div><div class="dt-day-body"><div class="dt-day-task">QBR / EBR với KH lớn</div><div class="dt-day-task">Gửi ROI report KH cần renewal</div><div class="dt-day-task">Training / demo tính năng mới</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--teal-l);color:var(--teal-d);">THỨ 6</div><div class="dt-day-body"><div class="dt-day-task">Viết Feedback Report tuần</div><div class="dt-day-task">Gửi báo cáo lên CS Lead</div><div class="dt-day-task">Lên lịch tuần sau</div></div></div>
+        </div>
+        <div class="dt-tip"><strong>💡 Gợi ý ưu tiên:</strong> Mỗi sáng, phân loại KH thành 3 nhóm: 🔴 cần xử lý ngay hôm nay · 🟡 cần liên lạc trong tuần · 🟢 ổn định, duy trì. Tập trung thời gian vào nhóm đỏ và vàng.</div>
+      </div>
+
+      <!-- CS Lead -->
+      <div class="dt-content" id="cs-lead">
+        <div style="font-size:12px;font-weight:500;color:var(--teal-d);margin-bottom:14px;padding:8px 12px;background:var(--teal-l);border-radius:8px;">
+          CS Lead / Manager · Quản lý team CSM, đảm bảo chất lượng dịch vụ, báo cáo lên C-level và phối hợp với Product
+        </div>
+        <div class="dt-period-grid">
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--teal-l);color:var(--teal-d);"><span>☀️</span> SÁNG — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review dashboard tổng: churn signals, health score toàn team</div><span class="dt-tag" style="background:var(--red-l);color:var(--red);">ưu tiên 1</span></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Xử lý escalation từ CSM (KH đỏ, complaint)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">1-on-1 nhanh với CSM có KH rủi ro cao</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review Save Plan đang thực thi — tiến độ?</div></div>
+            </div>
+          </div>
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--teal-l);color:var(--teal-d);"><span>🌤</span> CHIỀU — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review Feedback Reports từ CSM — tổng hợp top trends</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Align với Product về FR được ưu tiên</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Cập nhật CS metrics dashboard hàng ngày</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Gửi weekly summary cho C-level (thứ 6)</div><span class="dt-tag" style="background:var(--purple-l);color:var(--purple);">T6</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--ink3);margin-bottom:10px;">LỊCH TUẦN</div>
+        <div class="dt-weekly-row">
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--teal-l);color:var(--teal-d);">THỨ 2</div><div class="dt-day-body"><div class="dt-day-task">All-hands CS team (30 phút)</div><div class="dt-day-task">Review KPIs tuần trước</div><div class="dt-day-task">Assign renewal accounts</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--teal-l);color:var(--teal-d);">THỨ 3</div><div class="dt-day-body"><div class="dt-day-task">1-on-1 với từng CSM (15')</div><div class="dt-day-task">Review pipeline gia hạn</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--teal-l);color:var(--teal-d);">THỨ 4</div><div class="dt-day-body"><div class="dt-day-task">Họp CS–Product (30 phút)</div><div class="dt-day-task">Tổng hợp feedback tuần</div><div class="dt-day-task">Review adoption briefs mới</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--teal-l);color:var(--teal-d);">THỨ 5</div><div class="dt-day-body"><div class="dt-day-task">Tham dự EBR KH lớn</div><div class="dt-day-task">Review Save Plans đang chạy</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--teal-l);color:var(--teal-d);">THỨ 6</div><div class="dt-day-body"><div class="dt-day-task">Tổng hợp Feedback Report</div><div class="dt-day-task">Gửi báo cáo C-level</div><div class="dt-day-task">Planning tuần tới</div></div></div>
+        </div>
+      </div>
+
+      <!-- Onboarding Specialist -->
+      <div class="dt-content" id="cs-onboard">
+        <div style="font-size:12px;font-weight:500;color:var(--teal-d);margin-bottom:14px;padding:8px 12px;background:var(--teal-l);border-radius:8px;">
+          Onboarding Specialist · Chuyên trách đưa KH mới từ ký HĐ đến "first value" trong 14 ngày, sau đó bàn giao CSM
+        </div>
+        <div class="dt-period-grid">
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--teal-l);color:var(--teal-d);"><span>☀️</span> SÁNG — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Kiểm tra KH mới vừa ký HĐ từ Sales (Handoff doc)</div><span class="dt-tag" style="background:var(--coral-l);color:var(--coral);">new</span></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Gửi email chào mừng & link setup cho KH mới trong 24h</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Check login rate KH đang onboard — ai chưa login?</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Chuẩn bị nội dung session onboarding trong ngày</div></div>
+            </div>
+          </div>
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--teal-l);color:var(--teal-d);"><span>🌤</span> CHIỀU — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Thực hiện session onboarding (live hoặc async video)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Cập nhật onboarding tracker — KH nào đã đạt first value?</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Xử lý câu hỏi setup từ KH đang onboard</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Chuẩn bị handoff document cho CSM (KH đạt D14)</div><span class="dt-tag" style="background:var(--purple-l);color:var(--purple);">handoff</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="dt-tip"><strong>💡 Quy tắc D7/D14:</strong> Ngày 7 — check xem KH đã dùng core feature chưa. Ngày 14 — nếu chưa đạt first value → escalate ngay cho CS Lead, không đợi D30.</div>
+      </div>
+    </div>
+
+    <!-- ══ PRODUCT ══ -->
+    <div class="dt-content" id="dept-product">
+      <div class="dt-role-tabs">
+        <button class="dt-role-tab active" onclick="switchRole(this,'prod-pm')" style="background:var(--purple);border-color:var(--purple);color:#fff;">Product Manager</button>
+        <button class="dt-role-tab" onclick="switchRole(this,'prod-designer')">Product Designer</button>
+        <button class="dt-role-tab" onclick="switchRole(this,'prod-analyst')">Product Analyst</button>
+      </div>
+
+      <!-- PM -->
+      <div class="dt-content active" id="prod-pm">
+        <div style="font-size:12px;font-weight:500;color:var(--purple-d);margin-bottom:14px;padding:8px 12px;background:var(--purple-l);border-radius:8px;">
+          Product Manager · Sở hữu roadmap, viết PRD, phối hợp Engineering & Design, đo lường sau launch
+        </div>
+        <div class="dt-period-grid">
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--purple-l);color:var(--purple-d);"><span>☀️</span> SÁNG — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Daily standup với Engineering (15 phút) — blockers?</div><span class="dt-tag" style="background:var(--red-l);color:var(--red);">daily</span></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review metrics tính năng đang live (adoption D1/D7)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Đọc CS Feedback Report (thứ 2) — có FR nào urgent?</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Xem bug report / crash report từ Engineering</div></div>
+            </div>
+          </div>
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--purple-l);color:var(--purple-d);"><span>🌤</span> CHIỀU — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review design / spec với Designer (nếu đang trong sprint)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Cập nhật backlog — thêm FR mới, điều chỉnh scoring</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Viết hoặc cập nhật PRD cho tính năng đang discovery</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Trả lời câu hỏi clarification từ Engineering</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--ink3);margin-bottom:10px;">LỊCH TUẦN</div>
+        <div class="dt-weekly-row">
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--purple-l);color:var(--purple-d);">THỨ 2</div><div class="dt-day-body"><div class="dt-day-task">Sprint planning (nếu đầu sprint)</div><div class="dt-day-task">Đọc CS Feedback Report tuần trước</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--purple-l);color:var(--purple-d);">THỨ 3</div><div class="dt-day-body"><div class="dt-day-task">User interview (2/tháng)</div><div class="dt-day-task">Review metrics analytics</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--purple-l);color:var(--purple-d);">THỨ 4</div><div class="dt-day-body"><div class="dt-day-task">Sync với CS Lead</div><div class="dt-day-task">Backlog grooming (2 tuần/lần)</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--purple-l);color:var(--purple-d);">THỨ 5</div><div class="dt-day-body"><div class="dt-day-task">Stakeholder review PRD mới</div><div class="dt-day-task">Chuẩn bị Release Note</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--purple-l);color:var(--purple-d);">THỨ 6</div><div class="dt-day-body"><div class="dt-day-task">Sprint review / retro</div><div class="dt-day-task">Viết Adoption Brief nếu có launch</div></div></div>
+        </div>
+        <div class="dt-tip"><strong>💡 Rule of thumb:</strong> PM dành 40% thời gian cho discovery (research, interview, phân tích), 40% cho delivery (sprint, spec, review), 20% cho communication (stakeholder, CS, Marketing).</div>
+      </div>
+
+      <!-- Designer -->
+      <div class="dt-content" id="prod-designer">
+        <div style="font-size:12px;font-weight:500;color:var(--purple-d);margin-bottom:14px;padding:8px 12px;background:var(--purple-l);border-radius:8px;">
+          Product Designer · Thiết kế UX/UI cho tính năng mới, đảm bảo trải nghiệm nhất quán, phối hợp với PM và Engineering
+        </div>
+        <div class="dt-period-grid">
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--purple-l);color:var(--purple-d);"><span>☀️</span> SÁNG — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Standup với Engineering — xem có issue design cần clarify không</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Tiếp tục wireframe / prototype đang làm dở</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review feedback từ PM hoặc Engineering về design hôm trước</div></div>
+            </div>
+          </div>
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--purple-l);color:var(--purple-d);"><span>🌤</span> CHIỀU — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Design review với PM (thứ 3 & 5)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Cập nhật Figma file — đảm bảo hand-off specs đầy đủ</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Kiểm tra component library — có tạo inconsistency mới không</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Xem usability feedback từ CS / KH nếu có</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dt-tip"><strong>💡 Nguyên tắc thiết kế:</strong> Mỗi màn hình mới phải pass 3 câu hỏi — KH biết mình đang ở đâu không? Biết phải làm gì tiếp không? Biết đã thành công chưa? Nếu không → cần redesign.</div>
+      </div>
+
+      <!-- Analyst -->
+      <div class="dt-content" id="prod-analyst">
+        <div style="font-size:12px;font-weight:500;color:var(--purple-d);margin-bottom:14px;padding:8px 12px;background:var(--purple-l);border-radius:8px;">
+          Product Analyst · Phân tích dữ liệu sản phẩm, đo adoption, chạy A/B test, cung cấp insight cho PM ra quyết định
+        </div>
+        <div class="dt-period-grid">
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--purple-l);color:var(--purple-d);"><span>☀️</span> SÁNG — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Cập nhật dashboard DAU/WAU — có bất thường không?</div><span class="dt-tag" style="background:var(--red-l);color:var(--red);">daily</span></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Monitor A/B test đang chạy — statistical significance?</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Alert PM nếu có metric drop bất thường (&gt;10%)</div></div>
+            </div>
+          </div>
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--purple-l);color:var(--purple-d);"><span>🌤</span> CHIỀU — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Phân tích cohort retention mới (thứ 3 hàng tuần)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Trả lời câu hỏi data ad-hoc từ PM</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Cập nhật adoption report D7/D30 sau mỗi launch mới</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Viết insight summary để PM share với stakeholder (thứ 6)</div><span class="dt-tag" style="background:var(--purple-l);color:var(--purple);">T6</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SALES ══ -->
+    <div class="dt-content" id="dept-sales">
+      <div class="dt-role-tabs">
+        <button class="dt-role-tab active" onclick="switchRole(this,'sales-ae')" style="background:var(--coral);border-color:var(--coral);color:#fff;">Account Executive (AE)</button>
+        <button class="dt-role-tab" onclick="switchRole(this,'sales-sdr')">SDR / BDR</button>
+        <button class="dt-role-tab" onclick="switchRole(this,'sales-manager')">Sales Manager</button>
+      </div>
+
+      <!-- AE -->
+      <div class="dt-content active" id="sales-ae">
+        <div style="font-size:12px;font-weight:500;color:var(--coral-d);margin-bottom:14px;padding:8px 12px;background:var(--coral-l);border-radius:8px;">
+          Account Executive · Nhận SQL từ SDR hoặc Marketing, thực hiện demo, gửi proposal và chốt deal
+        </div>
+        <div class="dt-period-grid">
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--coral-l);color:var(--coral-d);"><span>☀️</span> SÁNG — Mỗi ngày (8:00–10:30)</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review CRM pipeline — deal nào cần push hôm nay?</div><span class="dt-tag" style="background:var(--red-l);color:var(--red);">ưu tiên 1</span></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Follow-up MQL mới trong 24h (nếu có từ hôm qua)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Chuẩn bị nội dung cho demo / call trong ngày</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Gửi follow-up email sau demo hôm qua (nếu có)</div></div>
+            </div>
+          </div>
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--coral-l);color:var(--coral-d);"><span>🌤</span> CHIỀU — Mỗi ngày (13:30–18:00)</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Thực hiện demo calls (khung giờ tốt nhất cho KH)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Cập nhật CRM ngay sau mỗi call — stage, next step, notes</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Gửi proposal trong 24h sau demo (ưu tiên làm ngay hôm đó)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Xử lý email deal đang trong giai đoạn negotiate</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Lên lịch các cuộc gọi cho ngày mai</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--ink3);margin-bottom:10px;">LỊCH TUẦN</div>
+        <div class="dt-weekly-row">
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--coral-l);color:var(--coral-d);">THỨ 2</div><div class="dt-day-body"><div class="dt-day-task">Sales team standup</div><div class="dt-day-task">Review pipeline coverage</div><div class="dt-day-task">Lên lịch demo cả tuần</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--coral-l);color:var(--coral-d);">THỨ 3</div><div class="dt-day-body"><div class="dt-day-task">Demo calls (cao điểm)</div><div class="dt-day-task">Gửi proposals pending</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--coral-l);color:var(--coral-d);">THỨ 4</div><div class="dt-day-body"><div class="dt-day-task">Demo calls (cao điểm)</div><div class="dt-day-task">Follow-up proposals đã gửi</div><div class="dt-day-task">1-on-1 với Sales Manager</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--coral-l);color:var(--coral-d);">THỨ 5</div><div class="dt-day-body"><div class="dt-day-task">Push các deal gần close</div><div class="dt-day-task">Negotiate & xử lý objection</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--coral-l);color:var(--coral-d);">THỨ 6</div><div class="dt-day-body"><div class="dt-day-task">CRM hygiene — clean up</div><div class="dt-day-task">Forecast tuần tới</div><div class="dt-day-task">Chuẩn bị pipeline review</div></div></div>
+        </div>
+        <div class="dt-tip"><strong>💡 Quy tắc 3–2–1:</strong> Mỗi tuần đặt mục tiêu ít nhất 3 demo mới · 2 proposal gửi · 1 deal close. Nếu không đủ demo → pipeline sẽ cạn trong 3–4 tuần.</div>
+      </div>
+
+      <!-- SDR -->
+      <div class="dt-content" id="sales-sdr">
+        <div style="font-size:12px;font-weight:500;color:var(--coral-d);margin-bottom:14px;padding:8px 12px;background:var(--coral-l);border-radius:8px;">
+          SDR / BDR · Tạo và qualify lead outbound, đặt lịch meeting cho AE, xử lý MQL inbound từ Marketing
+        </div>
+        <div class="dt-period-grid">
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--coral-l);color:var(--coral-d);"><span>☀️</span> SÁNG — Mỗi ngày (8:00–12:00)</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Follow-up MQL mới từ Marketing — gọi / email trong 24h</div><span class="dt-tag" style="background:var(--red-l);color:var(--red);">SLA 24h</span></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Cold outreach batch sáng: LinkedIn + Email (20–30 contacts)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Research leads mới trong danh sách outbound hôm nay</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Gọi điện cold call (block 9:00–11:00)</div></div>
+            </div>
+          </div>
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--coral-l);color:var(--coral-d);"><span>🌤</span> CHIỀU — Mỗi ngày (13:00–17:30)</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Discovery call để qualify (BANT) các lead đã respond</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Book meeting cho AE với lead đã qualify</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Cập nhật CRM — mọi activity đều phải log</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Tiếp tục email sequence với leads chưa respond</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Đạt target meetings booked trong ngày (tùy quota)</div><span class="dt-tag" style="background:var(--teal-l);color:var(--teal-d);">quota</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="dt-tip"><strong>💡 KPI hàng ngày SDR:</strong> 40–60 email outbound · 20–30 LinkedIn touches · 10–15 cold calls · mục tiêu 1–2 meetings booked/ngày. Tracking hàng ngày là bắt buộc.</div>
+      </div>
+
+      <!-- Sales Manager -->
+      <div class="dt-content" id="sales-manager">
+        <div style="font-size:12px;font-weight:500;color:var(--coral-d);margin-bottom:14px;padding:8px 12px;background:var(--coral-l);border-radius:8px;">
+          Sales Manager · Quản lý team AE/SDR, forecast doanh thu, coaching, phối hợp Marketing và CS
+        </div>
+        <div class="dt-period-grid">
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--coral-l);color:var(--coral-d);"><span>☀️</span> SÁNG — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review pipeline tổng team trên CRM — deal nào stagnant?</div><span class="dt-tag" style="background:var(--red-l);color:var(--red);">ưu tiên 1</span></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Team standup — blockers, wins, focus hôm nay</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review MQL quality feedback từ AE — báo Marketing</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Approve discount requests (nếu có)</div></div>
+            </div>
+          </div>
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--coral-l);color:var(--coral-d);"><span>🌤</span> CHIỀU — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">1-on-1 coaching với AE về deal cụ thể (2 lần/tuần mỗi AE)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Tham gia deal lớn với tư cách "executive sponsor"</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Cập nhật forecast cho C-level (thứ 6 hàng tuần)</div><span class="dt-tag" style="background:var(--purple-l);color:var(--purple);">T6</span></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Họp Sales–Marketing (thứ 4 hàng tháng)</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MARKETING ══ -->
+    <div class="dt-content" id="dept-marketing">
+      <div class="dt-role-tabs">
+        <button class="dt-role-tab active" onclick="switchRole(this,'mkt-content-role')" style="background:var(--blue);border-color:var(--blue);color:#fff;">Content Marketer</button>
+        <button class="dt-role-tab" onclick="switchRole(this,'mkt-performance')">Performance Marketer</button>
+        <button class="dt-role-tab" onclick="switchRole(this,'mkt-lead-role')">Lead Gen / Marketing Ops</button>
+        <button class="dt-role-tab" onclick="switchRole(this,'mkt-manager')">Marketing Manager</button>
+      </div>
+
+      <!-- Content -->
+      <div class="dt-content active" id="mkt-content-role">
+        <div style="font-size:12px;font-weight:500;color:var(--blue-d);margin-bottom:14px;padding:8px 12px;background:var(--blue-l);border-radius:8px;">
+          Content Marketer · Tạo nội dung blog, SEO, case study, newsletter và hỗ trợ sales enablement
+        </div>
+        <div class="dt-period-grid">
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--blue-l);color:var(--blue-d);"><span>☀️</span> SÁNG — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Check keyword ranking & organic traffic (Search Console)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review content calendar — deadline hôm nay là gì?</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Viết / chỉnh sửa content đang dở (deep work 2–3 tiếng)</div><span class="dt-tag" style="background:var(--blue-l);color:var(--blue-d);">focus</span></div>
+            </div>
+          </div>
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--blue-l);color:var(--blue-d);"><span>🌤</span> CHIỀU — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Publish và distribute content (social, email, Slack cộng đồng)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Phối hợp CS lấy quote KH / story cho case study</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Research topic mới dựa trên CS Feedback Report</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Cập nhật nội dung cũ (evergreen content optimization)</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--ink3);margin-bottom:10px;">LỊCH TUẦN</div>
+        <div class="dt-weekly-row">
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--blue-l);color:var(--blue-d);">THỨ 2</div><div class="dt-day-body"><div class="dt-day-task">Đọc CS Feedback Report</div><div class="dt-day-task">Lên ý tưởng content tuần</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--blue-l);color:var(--blue-d);">THỨ 3</div><div class="dt-day-body"><div class="dt-day-task">Viết blog post chính (deep work)</div><div class="dt-day-task">Outline newsletter tuần</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--blue-l);color:var(--blue-d);">THỨ 4</div><div class="dt-day-body"><div class="dt-day-task">Publish blog + promote</div><div class="dt-day-task">Làm sales enablement content</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--blue-l);color:var(--blue-d);">THỨ 5</div><div class="dt-day-body"><div class="dt-day-task">Gửi newsletter</div><div class="dt-day-task">Làm case study / testimonial</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--blue-l);color:var(--blue-d);">THỨ 6</div><div class="dt-day-body"><div class="dt-day-task">Review metrics content tuần</div><div class="dt-day-task">Lên kế hoạch tuần sau</div></div></div>
+        </div>
+        <div class="dt-tip"><strong>💡 Nguyên tắc content:</strong> 70% content giải quyết pain point của ICP (không liên quan trực tiếp đến sản phẩm) · 20% content sản phẩm · 10% brand/company story. Tỷ lệ này tạo trust trước khi bán.</div>
+      </div>
+
+      <!-- Performance -->
+      <div class="dt-content" id="mkt-performance">
+        <div style="font-size:12px;font-weight:500;color:var(--blue-d);margin-bottom:14px;padding:8px 12px;background:var(--blue-l);border-radius:8px;">
+          Performance Marketer · Quản lý paid ads (Google, LinkedIn), tối ưu conversion rate, báo cáo CPL và ROAS
+        </div>
+        <div class="dt-period-grid">
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--blue-l);color:var(--blue-d);"><span>☀️</span> SÁNG — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Check dashboard ads — CTR, CPC, conversion rate bất thường?</div><span class="dt-tag" style="background:var(--red-l);color:var(--red);">daily check</span></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review spend vs budget — có kênh nào overspend không?</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Kiểm tra lead quality từ ads hôm qua (MQL rate)</div></div>
+            </div>
+          </div>
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--blue-l);color:var(--blue-d);"><span>🌤</span> CHIỀU — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Tối ưu campaign — pause ads kém, scale ads tốt</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">A/B test ad copy / landing page (1 test/tuần)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Cập nhật báo cáo CPL theo kênh (hàng tuần thứ 6)</div><span class="dt-tag" style="background:var(--purple-l);color:var(--purple);">T6</span></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Sync với Sales về chất lượng lead từ từng kênh</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dt-tip"><strong>💡 Rule of 72h:</strong> Sau khi launch campaign mới, không thay đổi gì trong 72h đầu — cần đủ data để tối ưu đúng. Thay đổi quá sớm làm mất học thuật của thuật toán.</div>
+      </div>
+
+      <!-- Lead Gen / Ops -->
+      <div class="dt-content" id="mkt-lead-role">
+        <div style="font-size:12px;font-weight:500;color:var(--blue-d);margin-bottom:14px;padding:8px 12px;background:var(--blue-l);border-radius:8px;">
+          Lead Gen / Marketing Ops · Quản lý lead scoring, automation email, CRM data quality, báo cáo MQL → SQL
+        </div>
+        <div class="dt-period-grid">
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--blue-l);color:var(--blue-d);"><span>☀️</span> SÁNG — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review MQL queue — leads nào đạt ngưỡng cần chuyển Sales?</div><span class="dt-tag" style="background:var(--red-l);color:var(--red);">SLA 24h</span></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Kiểm tra email sequence automation — có lỗi delivery không?</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Check CRM data quality — lead không đủ thông tin</div></div>
+            </div>
+          </div>
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--blue-l);color:var(--blue-d);"><span>🌤</span> CHIỀU — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Phối hợp Sales review MQL quality — adjust scoring nếu cần</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Build / update nurture sequences dựa trên behavior</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Báo cáo MQL volume và MQL→SQL rate (thứ 5 hàng tuần)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Enrich lead data từ LinkedIn / Apollo (company size, industry)</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Marketing Manager -->
+      <div class="dt-content" id="mkt-manager">
+        <div style="font-size:12px;font-weight:500;color:var(--blue-d);margin-bottom:14px;padding:8px 12px;background:var(--blue-l);border-radius:8px;">
+          Marketing Manager · Quản lý toàn bộ chiến lược marketing, ngân sách, team và phối hợp với Sales / Product
+        </div>
+        <div class="dt-period-grid">
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--blue-l);color:var(--blue-d);"><span>☀️</span> SÁNG — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review MQL volume vs target tháng — đang thiếu bao nhiêu?</div><span class="dt-tag" style="background:var(--red-l);color:var(--red);">priority</span></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Marketing standup — blockers, launches trong tuần?</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review budget spend vs plan — có kênh nào cần điều chỉnh?</div></div>
+            </div>
+          </div>
+          <div class="dt-period-card">
+            <div class="dt-period-header" style="background:var(--blue-l);color:var(--blue-d);"><span>🌤</span> CHIỀU — Mỗi ngày</div>
+            <div class="dt-period-body">
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">1-on-1 với team members (theo lịch tuần)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Review chất lượng content / campaigns trước khi publish</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Họp Sales–Marketing (thứ 4 hàng tháng)</div></div>
+              <div class="dt-task"><div class="dt-check" onclick="toggleCheck(this)"></div><div class="dt-task-text">Gửi Marketing report cho C-level (thứ 6 hàng tuần)</div><span class="dt-tag" style="background:var(--purple-l);color:var(--purple);">T6</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--ink3);margin-bottom:10px;">LỊCH TUẦN MARKETING MANAGER</div>
+        <div class="dt-weekly-row">
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--blue-l);color:var(--blue-d);">THỨ 2</div><div class="dt-day-body"><div class="dt-day-task">Marketing standup</div><div class="dt-day-task">Review MQL pipeline</div><div class="dt-day-task">Lên kế hoạch campaign tuần</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--blue-l);color:var(--blue-d);">THỨ 3</div><div class="dt-day-body"><div class="dt-day-task">1-on-1 với Content / Performance</div><div class="dt-day-task">Review content trước khi đăng</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--blue-l);color:var(--blue-d);">THỨ 4</div><div class="dt-day-body"><div class="dt-day-task">Sync với Sales Manager</div><div class="dt-day-task">Review MQL quality feedback</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--blue-l);color:var(--blue-d);">THỨ 5</div><div class="dt-day-body"><div class="dt-day-task">Review campaign performance</div><div class="dt-day-task">Điều chỉnh budget nếu cần</div></div></div>
+          <div class="dt-day-card"><div class="dt-day-header" style="background:var(--blue-l);color:var(--blue-d);">THỨ 6</div><div class="dt-day-body"><div class="dt-day-task">Tổng hợp Marketing report</div><div class="dt-day-task">Planning tuần tới</div><div class="dt-day-task">Gửi báo cáo C-level</div></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end main -->
+</div><!-- end dt-layout -->
+</div><!-- end section -->
+</div><!-- end page -->
+
+<footer>
+  Allsupa.com · SaaS Operations Playbook · Internal use only
+</footer>
+
+<script>
+const MODALS = {
+  cs1: {
+    title: 'Onboarding & Setup',
+    body: `
+      <div class="modal-section"><h4>Mục tiêu</h4>
+      <p>Đảm bảo khách hàng mới được kích hoạt thành công và đạt được "first value" trong vòng 14 ngày đầu.</p></div>
+      <div class="modal-section"><h4>Các bước chính</h4>
+      <ul>
+        <li>Gửi email chào mừng + link tài nguyên trong vòng 24h sau khi ký HĐ</li>
+        <li>Đặt lịch Kickoff Call (30 phút) trong vòng 3 ngày làm việc</li>
+        <li>Thiết lập tài khoản, phân quyền users, cấu hình ban đầu</li>
+        <li>Xác định 2–3 use case ưu tiên và Success Goal của KH</li>
+        <li>Hướng dẫn sử dụng tính năng cốt lõi (live demo hoặc video)</li>
+        <li>Check-in ngày 7 và ngày 14 để đảm bảo adoption</li>
+      </ul></div>
+      <div class="modal-section"><h4>Checklist Onboarding</h4>
+      <div class="modal-pre">□ Tài khoản đã kích hoạt
+□ Users đã được thêm và phân quyền
+□ Kickoff call hoàn thành
+□ Success Goals đã được ghi nhận
+□ First use case đã được setup
+□ KH đã login ít nhất 1 lần
+□ Check-in D7 hoàn thành</div>
+      <button class="copy-btn" onclick="copyText(this)">Sao chép checklist</button></div>`
+  },
+  cs2: {
+    title: 'Relationship Management & Check-in',
+    body: `
+      <div class="modal-section"><h4>Cadence check-in</h4>
+      <ul>
+        <li><strong>Tháng 1–3:</strong> Check-in 2 tuần/lần (30 phút)</li>
+        <li><strong>Tháng 4+:</strong> Check-in hàng tháng (30 phút)</li>
+        <li><strong>QBR (Quarterly):</strong> Review 60 phút với leadership</li>
+      </ul></div>
+      <div class="modal-section"><h4>Agenda check-in hàng tháng</h4>
+      <div class="modal-pre">1. Recap tháng trước (5 phút)
+   – Nhìn lại goals đã đặt
+   – Tính năng đã sử dụng
+
+2. Cập nhật health score (5 phút)
+   – Chia sẻ dữ liệu sử dụng
+   – Highlight thành tựu
+
+3. Pain points & câu hỏi (10 phút)
+   – "Điều gì đang làm chậm team bạn?"
+   – "Tính năng nào chưa rõ cách dùng?"
+
+4. Feature preview (5 phút)
+   – Giới thiệu tính năng sắp ra
+   – Thu thập feedback
+
+5. Action items (5 phút)
+   – CS: ___
+   – KH: ___</div>
+      <button class="copy-btn" onclick="copyText(this)">Sao chép agenda</button></div>`
+  },
+  cs3: {
+    title: 'Feature Adoption — Tính năng Supa',
+    body: `
+      <div class="modal-section"><h4>Mục tiêu adoption</h4>
+      <p>Đảm bảo mỗi khách hàng sử dụng ít nhất <strong>3 tính năng cốt lõi</strong> của Allsupa trong 90 ngày đầu. Adoption rate mục tiêu: ≥ 70%.</p></div>
+      <div class="modal-section"><h4>Tính năng cần push theo giai đoạn</h4>
+      <ul>
+        <li><strong>Tuần 1–2:</strong> Core feature (setup, tạo data cơ bản)</li>
+        <li><strong>Tuần 3–4:</strong> Collaboration features (chia sẻ, phân quyền team)</li>
+        <li><strong>Tháng 2:</strong> Automation & integration</li>
+        <li><strong>Tháng 3:</strong> Analytics & reporting</li>
+      </ul></div>
+      <div class="modal-section"><h4>Cách đo adoption</h4>
+      <div class="modal-pre">– Login frequency: ≥ 3 lần/tuần/user
+– Features used: ≥ 3 tính năng chính
+– Data created: ngưỡng tùy theo plan
+– Team activation: % users đã login
+→ Health score = trung bình 4 chỉ số trên</div></div>`
+  },
+  cs4: {
+    title: 'Mẫu Feedback Report (CS → Product)',
+    body: `
+      <div class="modal-section"><h4>Cấu trúc báo cáo tuần</h4>
+      <div class="modal-pre">FEEDBACK REPORT — Tuần [số], [ngày]
+Người tổng hợp: [CSM name]
+─────────────────────────────────
+
+## 1. TỔNG QUAN
+– Số KH phỏng vấn / gặp trong tuần: X
+– Số feedback thu thập: X
+– NPS trung bình tuần: X
+
+## 2. FEATURE REQUESTS (ưu tiên cao)
+┌─ [Tên tính năng]
+│  KH yêu cầu: [Tên KH A], [Tên KH B]
+│  Use case: "Chúng tôi cần ... vì ..."
+│  Impact ước tính: Cao / Trung / Thấp
+└─ Đã tồn tại trong backlog: Có / Không
+
+## 3. BUG / FRICTION POINTS
+– [Mô tả vấn đề] — [tên KH] — [mức độ]
+
+## 4. TÍNH NĂNG ĐƯỢC YÊU THÍCH
+– [Tính năng X]: KH A, B, C đều khen
+– Lý do: [quote ngắn từ KH]
+
+## 5. ACTION ITEMS CHO PRODUCT
+□ Xem xét FR #1 cho sprint tới
+□ Investigate bug X
+□ Follow up với KH Y về wireframe</div>
+      <button class="copy-btn" onclick="copyText(this)">Sao chép template</button></div>`
+  },
+  p1: {
+    title: 'Discovery & Research',
+    body: `
+      <div class="modal-section"><h4>Đầu vào (Inputs)</h4>
+      <ul>
+        <li>Feedback Report từ CS (hàng tuần)</li>
+        <li>Data analytics từ hệ thống (DAU, feature usage)</li>
+        <li>Competitive intelligence (đối thủ ra gì?)</li>
+        <li>Market trends, industry reports</li>
+      </ul></div>
+      <div class="modal-section"><h4>Hoạt động chính</h4>
+      <ul>
+        <li>User interview (2–4 KH/tháng, phối hợp CS)</li>
+        <li>Phân tích funnel & drop-off trong sản phẩm</li>
+        <li>Review các FR đang pending trong backlog</li>
+        <li>Competitive feature matrix cập nhật hàng quý</li>
+      </ul></div>
+      <div class="modal-section"><h4>Đầu ra (Outputs)</h4>
+      <ul>
+        <li>Insight doc (problem statement, opportunity sizing)</li>
+        <li>Jobs-to-be-done mapping</li>
+        <li>Input cho buổi Prioritization tiếp theo</li>
+      </ul></div>`
+  },
+  p2: {
+    title: 'Prioritization & Roadmap',
+    body: `
+      <div class="modal-section"><h4>Framework scoring</h4>
+      <div class="modal-pre">Score = (Impact × Reach) / Effort
+
+Impact:  1–5 (ảnh hưởng đến KH thế nào?)
+Reach:   1–5 (bao nhiêu % KH bị ảnh hưởng?)
+Effort:  1–5 (độ phức tạp để build)
+
+→ Feature có score cao nhất → ưu tiên</div></div>
+      <div class="modal-section"><h4>Nguồn input vào Roadmap</h4>
+      <ul>
+        <li>CS Feedback Reports (30% trọng số)</li>
+        <li>Product analytics data (30%)</li>
+        <li>OKR công ty (30%)</li>
+        <li>Strategic partnerships (10%)</li>
+      </ul></div>
+      <div class="modal-section"><h4>Cadence</h4>
+      <ul>
+        <li>Grooming backlog: 2 tuần/lần</li>
+        <li>Roadmap review với CS: hàng tháng</li>
+        <li>Roadmap review với stakeholders: hàng quý</li>
+      </ul></div>`
+  },
+  p3: { title: 'Design & Spec (PRD)', body: `<div class="modal-section"><h4>Cấu trúc PRD</h4><div class="modal-pre">PRD — [Tên tính năng]
+Version: 1.0 | Ngày: ___
+PM: ___ | Designer: ___
+─────────────────────────
+
+## Problem Statement
+Khách hàng đang gặp khó khăn với...
+Điều này dẫn đến...
+
+## Goals & Success Metrics
+– Adoption target: X% trong 30 ngày sau launch
+– KPI liên kết: ___
+
+## User Stories
+As a [user], I want to [action]
+so that [benefit].
+
+## Scope (In / Out of scope)
+IN:  ___
+OUT: ___
+
+## Design links
+Figma: ___
+
+## Engineering notes
+___
+
+## Launch plan
+– CS brief: ___
+– Rollout: ___</div><button class="copy-btn" onclick="copyText(this)">Sao chép PRD template</button></div>` },
+  p4: { title: 'Build & Launch', body: `<div class="modal-section"><h4>Launch checklist</h4><div class="modal-pre">PRE-LAUNCH
+□ PRD đã được approve
+□ Design review hoàn thành
+□ Engineering estimate có
+□ QA test plan viết xong
+□ Release Note đã soạn
+□ Adoption Brief đã gửi CS
+
+LAUNCH DAY
+□ Feature flag bật đúng segment
+□ Monitoring dashboard live
+□ CS đã thông báo cho KH tier 1
+□ Slack channel #launches cập nhật
+
+POST-LAUNCH (tuần 1)
+□ Bug báo cáo < threshold
+□ Adoption D7 đạt target
+□ CS feedback loop bật</div><button class="copy-btn" onclick="copyText(this)">Sao chép checklist</button></div>` },
+  p5: { title: 'Analytics & Iteration', body: `<div class="modal-section"><h4>Metrics theo dõi sau launch</h4><ul><li><strong>D1, D7, D30 adoption:</strong> % users đã dùng tính năng</li><li><strong>Retention:</strong> % quay lại dùng lần 2</li><li><strong>Completion rate:</strong> % hoàn thành flow chính</li><li><strong>Error rate:</strong> % gặp lỗi trong flow</li></ul></div><div class="modal-section"><h4>Khi nào iterate?</h4><ul><li>D30 adoption &lt; 30% → tìm friction point, cải thiện UX</li><li>Completion rate &lt; 60% → xem xét lại flow</li><li>CS báo cáo nhiều support ticket về tính năng → urgent fix</li></ul></div>` },
+
+  h_feedback: {
+    title: 'Handoff: Feedback Report (CS → Product)',
+    body: `<div class="modal-section"><h4>Mục đích</h4><p>CS tổng hợp toàn bộ feedback, feature request và pain point từ khách hàng trong tuần, gửi lên Product để đưa vào prioritization.</p></div><div class="modal-section"><h4>Quy trình</h4><ul><li>CS thu thập qua: check-in, support ticket, NPS survey, user interview</li><li>Mỗi thứ 6: CS Lead tổng hợp và gửi Feedback Report</li><li>Product Manager review và phân loại vào backlog trước thứ 2 tuần sau</li><li>Hàng tháng: sync call CS + Product để align priority</li></ul></div><div class="modal-section"><h4>Format gửi</h4><p>Notion doc + mention @PM trong Slack #product-feedback</p></div>`
+  },
+  h_release: {
+    title: 'Mẫu Release Note (Product → CS)',
+    body: `<div class="modal-section"><h4>Mục đích</h4><p>Product thông báo cho CS về tính năng mới để CS chuẩn bị thông báo và hướng dẫn khách hàng một cách chủ động.</p></div><div class="modal-section"><h4>Cấu trúc Release Note</h4><div class="modal-pre">RELEASE NOTE — v[version] — [ngày]
+─────────────────────────────────
+
+## Tính năng mới
+[Tên tính năng]
+→ Làm được gì: ___
+→ Ai sẽ được lợi nhất: ___
+→ Cách bật: ___
+
+## Cải tiến / Fix
+– [Bug X] đã được sửa
+– [Flow Y] được cải thiện
+
+## Thông báo KH
+CS cần thông báo với:
+□ KH tier 1 (proactive, trong 2 ngày)
+□ KH tier 2 (email, trong 5 ngày)
+□ Tất cả (in-app notification)
+
+## Tài nguyên CS
+– Video demo: [link]
+– FAQ draft: [link]
+– Figma screenshot: [link]</div>
+      <button class="copy-btn" onclick="copyText(this)">Sao chép template</button></div>`
+  },
+  h_adoption: {
+    title: 'Feature Adoption Brief (Product → CS)',
+    body: `<div class="modal-section"><h4>Mục đích</h4><p>Hướng dẫn CS cách push tính năng mới tới đúng nhóm khách hàng, với đúng message và đúng thời điểm.</p></div><div class="modal-section"><h4>Cấu trúc Adoption Brief</h4><div class="modal-pre">ADOPTION BRIEF — [Tên tính năng]
+─────────────────────────────────
+
+## Tính năng là gì? (1 câu)
+[Allsupa giờ cho phép bạn ... giúp ...]
+
+## Ai nên dùng tính năng này?
+Segment ưu tiên: ___
+Segment thứ hai: ___
+
+## Conversation guide cho CS
+Khi nào mention: ___
+Câu mở: "Tôi thấy team bạn đang..."
+Demo flow: ___
+
+## Khách hàng nào cần proactive outreach?
+– KH đang gặp pain point X → [tên KH]
+– KH từng request FR này → [tên KH]
+
+## Mục tiêu adoption 30 ngày
+Target: X% segment ưu tiên đã dùng</div>
+      <button class="copy-btn" onclick="copyText(this)">Sao chép template</button></div>`
+  },
+
+  save_plan: {
+    title: 'Mẫu Save Plan — Khách hàng nguy cơ cao',
+    body: `<div class="modal-section"><h4>Khi nào dùng</h4><p>Khi health score &lt; 40 hoặc KH đã có tín hiệu muốn cancel. Phải hoàn thành trong 48h sau khi phát hiện.</p></div><div class="modal-section"><h4>Cấu trúc Save Plan</h4><div class="modal-pre">SAVE PLAN — [Tên KH] — [Ngày]
+CSM phụ trách: ___  |  Approved by: CS Manager
+─────────────────────────────────────────────
+
+## 1. TÓM TẮT TÌNH HÌNH
+Health score hiện tại: ___/100
+Ngày phát hiện risk: ___
+Tín hiệu churn: ___
+
+## 2. NGUYÊN NHÂN GỐC (Root Cause)
+□ Không dùng được tính năng X
+□ Thiếu người champion nội bộ
+□ Vượt budget / áp lực cắt chi phí
+□ Đối thủ đang tiếp cận
+□ Khác: ___
+
+## 3. KẾ HOẠCH HÀNH ĐỘNG
+Tuần 1:
+– [Hành động] — Người thực hiện — Deadline
+
+Tuần 2:
+– [Hành động] — Người thực hiện — Deadline
+
+## 4. ĐỀ XUẤT ĐẶC BIỆT (nếu cần)
+□ Giảm giá X% cho renewal sớm
+□ Thêm training miễn phí
+□ Kết nối với Product team
+□ Điều chỉnh điều khoản HĐ
+
+## 5. ESCALATION
+Nếu sau 2 tuần không cải thiện:
+→ CEO / CSO gặp trực tiếp KH
+
+## 6. SUCCESS CRITERIA
+Sau 30 ngày: health score ≥ 55
+Sau 60 ngày: KH xác nhận gia hạn</div>
+    <button class="copy-btn" onclick="copyText(this)">Sao chép Save Plan</button></div>`
+  },
+
+  checkin: {
+    title: 'Agenda Check-in hàng tháng',
+    body: `<div class="modal-section"><h4>Agenda 30 phút</h4><div class="modal-pre">CHECK-IN THÁNG [X] — [Tên KH]
+Ngày: ___  |  CSM: ___  |  KH: ___
+─────────────────────────────────
+
+[0:00 – 0:05] RECAP
+– Tháng trước đã đạt được gì?
+– Goal nào chưa đạt, lý do?
+
+[0:05 – 0:10] USAGE HIGHLIGHTS
+– "Team bạn đã tạo X, dùng Y..."
+– "Tính năng Z adoption tăng X%"
+
+[0:10 – 0:20] PAIN POINTS & NEEDS
+→ "Điều gì đang cản trở team?"
+→ "Tính năng nào bạn muốn thấy?"
+→ "Bạn đang so sánh Allsupa với gì?"
+
+[0:20 – 0:25] UPDATES TỪ ALLSUPA
+– Tính năng mới: ___
+– Coming soon: ___
+
+[0:25 – 0:30] ACTION ITEMS
+CS sẽ làm: ___
+KH sẽ làm: ___
+Lịch check-in tới: ___</div>
+    <button class="copy-btn" onclick="copyText(this)">Sao chép agenda</button></div>`
+  },
+
+  roi_report: {
+    title: 'Mẫu ROI Report — Trước renewal',
+    body: `<div class="modal-section"><h4>Cấu trúc ROI Report</h4><div class="modal-pre">ROI REPORT — [Tên KH] — [Tháng/Năm]
+Chuẩn bị bởi: [CSM] | Gửi T-45 trước hết HĐ
+─────────────────────────────────────────────
+
+## KẾT QUẢ CHÍNH (12 tháng qua)
+
+Sử dụng Allsupa:
+– Tổng users active: X / X (đăng ký)
+– Số tác vụ hoàn thành: X
+– Thời gian tiết kiệm/tuần: ~X giờ
+
+ROI ước tính:
+– Chi phí Allsupa/năm: X triệu đ
+– Giá trị tiết kiệm ước tính: X triệu đ
+– ROI: X%
+
+## TÍNH NĂNG SỬ DỤNG NHIỀU NHẤT
+1. [Tính năng A] — X lần/tháng
+2. [Tính năng B] — X lần/tháng
+3. [Tính năng C] — X lần/tháng
+
+## THÀNH TỰU NỔI BẬT
+"[Quote từ KH về kết quả đạt được]"
+
+## KẾ HOẠCH NĂM TỚI
+Chúng tôi sẽ ra: [Roadmap highlights]
+Phù hợp với goal của bạn: ___
+
+## ĐỀ XUẤT GIA HẠN
+Gói: ___  |  Giá: ___
+Điều khoản đặc biệt (nếu có): ___</div>
+    <button class="copy-btn" onclick="copyText(this)">Sao chép ROI Report</button></div>`
+  },
+
+  upsell_email: {
+    title: 'Mẫu Email Upsell cho KH khỏe mạnh',
+    body: `<div class="modal-section"><h4>Email upsell / mời gia hạn sớm</h4><div class="modal-pre">Subject: [Tên KH] — Bạn đang dùng Allsupa rất tốt!
+
+Chào [Tên Champion],
+
+Nhìn lại 12 tháng qua, team [Tên KH]
+đã đạt được những kết quả ấn tượng
+với Allsupa — đặc biệt là [highlight].
+
+Vì HĐ của bạn sắp hết hạn vào [ngày],
+mình muốn chia sẻ sớm 2 điều:
+
+1. ĐỀ XUẤT GIA HẠN ƯU ĐÃI
+   Ký sớm trước [ngày] → giữ nguyên giá
+   hiện tại + [thêm benefit cụ thể].
+
+2. MỞ RỘNG ĐÁP ỨNG NHU CẦU MỚI
+   Tôi thấy team bạn đang mở rộng —
+   gói [Plan X] sẽ giúp [benefit cụ thể].
+
+Mình có thể book 20 phút tuần này
+để xem qua báo cáo ROI và các options
+không? [Link đặt lịch]
+
+Trân trọng,
+[Tên CSM]
+Customer Success · Allsupa.com</div>
+    <button class="copy-btn" onclick="copyText(this)">Sao chép email</button></div>`
+  },
+
+  feedback_report: { title: 'Feedback Report (CS → Product)', body: '' },
+  release_note: { title: 'Release Note (Product → CS)', body: '' },
+  adoption_brief: { title: 'Feature Adoption Brief', body: '' },
+
+  /* ── HANDOFF MODALS ── */
+  h_mql: {
+    title: 'Handoff: MQL — Marketing → Sales',
+    body: `<div class="modal-section"><h4>Khi nào trigger?</h4><p>Khi một lead đạt đủ điểm lead scoring dựa trên hành vi (xem pricing, download case study, đăng ký trial...) và khớp với ICP (ngành, quy mô, vị trí).</p></div>
+    <div class="modal-section"><h4>Marketing cần chuẩn bị gì trước khi chuyển?</h4><ul><li>Tên, email, công ty, chức vụ của lead</li><li>Source (từ kênh nào đến: Google Ads, SEO, Webinar...)</li><li>Hành vi gần nhất (trang đã xem, content đã tải)</li><li>Lead score hiện tại</li></ul></div>
+    <div class="modal-section"><h4>SLA</h4><div class="modal-pre">Marketing gửi MQL → Sales follow up trong 24h (giờ làm việc)
+Nếu quá 24h không có phản hồi → Marketing re-nurture</div></div>`
+  },
+  h_sql: {
+    title: 'Handoff: SQL — Sales qualify xong',
+    body: `<div class="modal-section"><h4>Tiêu chí SQL (BANT)</h4><ul><li><strong>Budget:</strong> Có ngân sách hoặc đang trong quy trình phê duyệt</li><li><strong>Authority:</strong> Đang nói chuyện với người ra quyết định hoặc influencer</li><li><strong>Need:</strong> Có pain point rõ ràng mà Allsupa giải quyết được</li><li><strong>Timeline:</strong> Có kế hoạch triển khai trong 3 tháng</li></ul></div>
+    <div class="modal-section"><h4>Sau khi qualify</h4><p>Cập nhật CRM (stage → SQL), lên lịch Demo call trong 3 ngày làm việc.</p></div>`
+  },
+  h_won: {
+    title: 'Handoff: Won Deal — Sales → CS',
+    body: `<div class="modal-section"><h4>Mục đích</h4><p>Đảm bảo CS nhận đầy đủ thông tin về khách hàng để onboard suôn sẻ. Một handoff tệ = TTV dài = khách hàng không thấy value sớm = tăng churn.</p></div>
+    <div class="modal-section"><h4>Cấu trúc Handoff Document</h4><div class="modal-pre">DEAL HANDOFF — [Tên KH] — [Ngày ký]
+AE phụ trách: ___  |  CSM nhận: ___
+─────────────────────────────────────
+
+## THÔNG TIN CÔNG TY
+Ngành: ___  |  Quy mô: ___ nhân viên
+Gói đã mua: ___  |  Giá trị HĐ: ___/năm
+Ngày bắt đầu: ___  |  Ngày hết hạn: ___
+
+## NGƯỜI LIÊN HỆ CHÍNH
+Champion: [Tên] — [Email] — [Phone]
+Decision maker: [Tên] — [Chức vụ]
+Người dùng chính: ___
+
+## TẠI SAO HỌ MUA?
+Pain point chính: ___
+Use case ưu tiên: ___
+KPI họ muốn cải thiện: ___
+
+## RỦI RO & LƯU Ý
+– [Điều gì Sales đã hứa cần CS biết]
+– [Mối quan tâm KH còn lại]
+– [Đối thủ họ đã cân nhắc]
+
+## BƯỚC TIẾP THEO
+□ CS gửi email chào mừng trong 24h
+□ Kickoff call trong 3 ngày làm việc</div>
+      <button class="copy-btn" onclick="copyText(this)">Sao chép handoff doc</button></div>`
+  },
+  h_expansion: {
+    title: 'Handoff: Expansion Signal — CS → Sales',
+    body: `<div class="modal-section"><h4>Khi nào CS báo Sales?</h4><ul><li>KH mention muốn thêm users / team khác</li><li>KH hỏi về tính năng chỉ có ở plan cao hơn</li><li>Health score > 80 + đang gần hết giới hạn plan</li><li>KH refer một công ty khác trong group của họ</li></ul></div>
+    <div class="modal-section"><h4>CS cần cung cấp cho Sales</h4><div class="modal-pre">EXPANSION SIGNAL
+KH: ___  |  CSM: ___  |  Ngày: ___
+
+Tín hiệu: ___
+Context: "KH nói rằng..."
+Current plan: ___
+Đề xuất upgrade: ___
+Người nên contact: [Tên, chức vụ]
+Thời điểm tốt nhất tiếp cận: ___</div></div>`
+  },
+  h_content: {
+    title: 'Handoff: Content & Case Study — Marketing → CS',
+    body: `<div class="modal-section"><h4>Marketing hỗ trợ CS như thế nào?</h4><ul><li>Cung cấp case study theo ngành để CS dùng trong check-in và renewal</li><li>Tạo nội dung onboarding (video, guide) cho sản phẩm mới</li><li>Cung cấp template email cho CS dùng khi push tính năng</li><li>Alert CS khi có campaign liên quan đến KH của họ</li></ul></div>
+    <div class="modal-section"><h4>CS cung cấp lại cho Marketing</h4><ul><li>KH sẵn sàng làm case study / testimonial</li><li>Quote hay từ KH có thể dùng trên website</li><li>Referral leads từ KH hiện tại</li></ul></div>`
+  },
+
+  /* ── PIPELINE MODALS ── */
+  pipe_prospect: {
+    title: 'Stage 1 · Prospecting',
+    body: `<div class="modal-section"><h4>Mục tiêu</h4><p>Xác định và tiếp cận những công ty phù hợp với ICP (Ideal Customer Profile) của Allsupa.</p></div>
+    <div class="modal-section"><h4>ICP của Allsupa (ví dụ)</h4><ul><li>Ngành: [định nghĩa theo thực tế]</li><li>Quy mô: 20–500 nhân viên</li><li>Vị trí: người có nhu cầu quản lý [use case cốt lõi]</li><li>Dấu hiệu mua: đang tuyển dụng, mở rộng team, vừa raise vốn</li></ul></div>
+    <div class="modal-section"><h4>Nguồn lead</h4><ul><li>Inbound từ Marketing (MQL)</li><li>Outbound: LinkedIn Sales Navigator, cold email</li><li>Referral từ KH hiện tại</li><li>Events, hội thảo ngành</li></ul></div>`
+  },
+  pipe_qualify: {
+    title: 'Stage 2 · Qualification',
+    body: `<div class="modal-section"><h4>Framework BANT</h4><div class="modal-pre">B — Budget:    Có ngân sách? Đã được phê duyệt chưa?
+A — Authority: Đang nói chuyện với ai? Họ có quyền quyết định không?
+N — Need:      Pain point cụ thể là gì? Allsupa giải quyết được không?
+T — Timeline:  Khi nào họ muốn triển khai?
+
+→ Cần đủ cả 4 để chuyển sang Demo</div></div>
+    <div class="modal-section"><h4>Câu hỏi qualify</h4><ul><li>"Team bạn đang giải quyết [vấn đề X] như thế nào?"</li><li>"Điều gì sẽ xảy ra nếu vấn đề này không được giải quyết?"</li><li>"Ai là người ra quyết định cho loại công cụ này?"</li><li>"Bạn có timeline cụ thể nào không?"</li></ul></div>`
+  },
+  pipe_demo: {
+    title: 'Stage 3 · Demo & Discovery',
+    body: `<div class="modal-section"><h4>Cấu trúc buổi Demo 45 phút</h4><div class="modal-pre">[0:00–0:05] Ice break & agenda
+[0:05–0:15] Discovery sâu
+  – "Quy trình hiện tại của bạn là gì?"
+  – "Bạn đang dùng tool gì? Điều gì chưa ổn?"
+  – "Mục tiêu 6 tháng tới của team là gì?"
+
+[0:15–0:35] Demo tập trung vào pain
+  – Chỉ demo tính năng liên quan đến pain họ vừa chia sẻ
+  – Không demo toàn bộ product
+
+[0:35–0:42] Handling questions
+
+[0:42–0:45] Next steps rõ ràng
+  – "Tôi sẽ gửi proposal vào [ngày]"
+  – "Bạn cần ai review trước khi quyết định?"</div>
+      <button class="copy-btn" onclick="copyText(this)">Sao chép agenda demo</button></div>`
+  },
+  pipe_proposal: {
+    title: 'Stage 4 · Gửi Proposal & Báo giá',
+    body: `<div class="modal-section"><h4>Cấu trúc Proposal</h4><div class="modal-pre">PROPOSAL — Allsupa dành cho [Tên KH]
+Chuẩn bị bởi: [AE]  |  Ngày: ___
+──────────────────────────────────
+
+1. VẤN ĐỀ BẠN ĐANG GẶP
+   (recap lại pain point từ Discovery)
+
+2. CÁCH ALLSUPA GIẢI QUYẾT
+   (chỉ đề cập tính năng liên quan)
+
+3. ROI ƯỚC TÍNH
+   – Tiết kiệm X giờ/tuần → ___ triệu đ/năm
+   – Tăng X% [metric KH quan tâm]
+
+4. GÓI ĐỀ XUẤT
+   Gói: ___  |  Số users: ___
+   Giá: ___ /tháng (thanh toán năm)
+
+5. BƯỚC TIẾP THEO
+   □ Review proposal trước [ngày]
+   □ Call Q&A: [ngày đề xuất]</div>
+      <button class="copy-btn" onclick="copyText(this)">Sao chép cấu trúc proposal</button></div>`
+  },
+  pipe_negotiate: {
+    title: 'Stage 5 · Đàm phán & Xử lý objection',
+    body: `<div class="modal-section"><h4>Các objection phổ biến & cách xử lý</h4><div class="modal-pre">"Đắt quá"
+→ Hỏi: "Đắt so với gì?" → Tính ROI cụ thể
+→ Đề xuất gói nhỏ hơn để bắt đầu
+
+"Cần thêm thời gian suy nghĩ"
+→ "Điều gì bạn cần thêm thông tin?"
+→ Đặt deadline nhẹ (offer hết hạn)
+
+"Đang dùng [đối thủ] rồi"
+→ Tìm hiểu điều gì đang không ổn với tool cũ
+→ Demo tính năng differentiated
+
+"Cần phê duyệt từ cấp trên"
+→ Hỏi: "Tôi có thể gặp/gửi thông tin cho họ không?"
+→ Chuẩn bị 1-pager cho executive</div></div>
+    <div class="modal-section"><h4>Discount policy</h4><ul><li>Ký năm: tối đa X% discount (cần approval manager)</li><li>Ký 2 năm: tối đa X% (cần approval C-level)</li><li>Không discount dưới cost threshold</li></ul></div>`
+  },
+  pipe_close: {
+    title: 'Stage 6 · Closed Won → Bàn giao CS',
+    body: `<div class="modal-section"><h4>Checklist ngay sau ký HĐ</h4><div class="modal-pre">□ Cập nhật CRM: stage → Closed Won
+□ Điền Handoff Document đầy đủ
+□ Gửi email intro: AE giới thiệu CSM với KH
+□ Add KH vào billing system
+□ Tạo tài khoản Allsupa cho KH
+□ Slack #new-customers: post thông báo win
+□ CS xác nhận đã nhận handoff
+□ Kickoff call được lên lịch trong 3 ngày</div>
+      <button class="copy-btn" onclick="copyText(this)">Sao chép checklist</button></div>
+    <div class="modal-section"><h4>Email intro Sales → CS (gửi cho KH)</h4><div class="modal-pre">Subject: Chào mừng [KH] — Giới thiệu team Allsupa
+
+Chào [Tên KH],
+
+Cảm ơn bạn đã tin tưởng Allsupa!
+
+Từ hôm nay, [Tên CSM] sẽ là người đồng hành
+cùng team bạn. [Tên CSM] sẽ liên hệ trong 24h
+để sắp xếp buổi Kickoff đầu tiên.
+
+[Tên AE]</div></div>`
+  },
+
+  /* ── MARKETING MODALS ── */
+  mkt_brand: {
+    title: 'Brand & Positioning',
+    body: `<div class="modal-section"><h4>Nhiệm vụ</h4><p>Xây dựng và duy trì nhận thức thương hiệu Allsupa — bao gồm thông điệp, visual identity, website và positioning so với đối thủ.</p></div>
+    <div class="modal-section"><h4>Đầu ra chính</h4><ul><li>Brand guidelines (màu sắc, font, tone of voice)</li><li>Messaging framework: value prop cho từng ICP segment</li><li>Website copy & landing pages</li><li>Competitor battlecard (so sánh với đối thủ)</li></ul></div>
+    <div class="modal-section"><h4>Phối hợp với team khác</h4><ul><li>CS cung cấp quote KH thực tế để đưa lên website</li><li>Product cung cấp roadmap để Marketing tạo anticipation</li><li>Sales phản hồi về messaging nào hiệu quả trong demo</li></ul></div>`
+  },
+  mkt_content: {
+    title: 'Content Marketing',
+    body: `<div class="modal-section"><h4>Mục tiêu</h4><p>Tạo nội dung hữu ích thu hút đúng ICP, xây dựng trust và tạo leads organic (không phụ thuộc hoàn toàn vào paid ads).</p></div>
+    <div class="modal-section"><h4>Các kênh & format</h4><ul><li><strong>Blog / SEO:</strong> Bài viết giải quyết pain point của ICP, rank từ khóa ngành</li><li><strong>Case study:</strong> Câu chuyện thành công của KH thực tế (phối hợp CS)</li><li><strong>Newsletter:</strong> Cập nhật ngành + tips sử dụng Allsupa</li><li><strong>Video / Demo:</strong> How-to, feature walkthrough</li></ul></div>
+    <div class="modal-section"><h4>Lịch content</h4><div class="modal-pre">Tuần 1: Blog post SEO
+Tuần 2: Case study hoặc newsletter
+Tuần 3: Social content + short video
+Tuần 4: Webinar hoặc ebook (content lớn)</div></div>`
+  },
+  mkt_demand: {
+    title: 'Demand Generation',
+    body: `<div class="modal-section"><h4>Mục tiêu</h4><p>Tạo ra lượng leads đủ lớn và đủ chất lượng để Sales có thể đạt quota. Bao gồm cả inbound (organic, SEO) và outbound (paid, events).</p></div>
+    <div class="modal-section"><h4>Kênh chính</h4><ul><li><strong>Google Ads:</strong> Search intent cao, target từ khóa competitor & pain point</li><li><strong>LinkedIn Ads:</strong> Target theo chức vụ, ngành, quy mô công ty</li><li><strong>Webinar:</strong> Thu hút ICP bằng nội dung có giá trị, convert thành lead</li><li><strong>Events / Hội thảo:</strong> Gặp gỡ trực tiếp, network, brand awareness</li></ul></div>
+    <div class="modal-section"><h4>Budget allocation (ví dụ)</h4><div class="modal-pre">Google Ads:  40%
+LinkedIn:    30%
+Events:      20%
+Other:       10%</div></div>`
+  },
+  mkt_lead: {
+    title: 'Lead Nurturing',
+    body: `<div class="modal-section"><h4>Mục tiêu</h4><p>Duy trì liên lạc với leads chưa sẵn sàng mua ngay, nuôi dưỡng bằng nội dung có giá trị cho đến khi họ đạt ngưỡng MQL.</p></div>
+    <div class="modal-section"><h4>Email nurture sequence (ví dụ)</h4><div class="modal-pre">D+0:  Email chào mừng + tài nguyên hữu ích
+D+3:  Case study ngành liên quan
+D+7:  Blog post giải quyết pain point #1
+D+14: Mời dùng thử / demo
+D+21: So sánh Allsupa vs giải pháp thủ công
+D+30: Last touch — "Bạn đã sẵn sàng chưa?"</div>
+      <button class="copy-btn" onclick="copyText(this)">Sao chép sequence</button></div>
+    <div class="modal-section"><h4>Lead scoring</h4><ul><li>Xem trang Pricing: +15 điểm</li><li>Download case study: +10 điểm</li><li>Mở email: +2 điểm</li><li>Click link trong email: +5 điểm</li><li>Đăng ký webinar: +12 điểm</li><li>≥ 40 điểm → chuyển MQL cho Sales</li></ul></div>`
+  },
+  mkt_mql: {
+    title: 'Chuyển MQL → Sales',
+    body: `<div class="modal-section"><h4>Tiêu chí MQL</h4><ul><li>Lead score ≥ 40 điểm</li><li>Khớp với ICP (ngành, quy mô, chức vụ)</li><li>Có ít nhất 1 hành động "high intent" (xem Pricing, dùng thử, hỏi demo)</li></ul></div>
+    <div class="modal-section"><h4>Quy trình chuyển</h4><div class="modal-pre">1. Marketing đánh dấu "MQL" trong CRM
+2. Auto-assign cho AE phụ trách theo khu vực/ngành
+3. Slack notification đến AE: "New MQL: [Tên]"
+4. AE follow up trong 24h (giờ làm việc)
+5. Nếu không reach được → Marketing re-nurture
+6. AE cập nhật kết quả qualify vào CRM</div></div>
+    <div class="modal-section"><h4>SLA đã thỏa thuận</h4><div class="modal-pre">Marketing cam kết: X MQL/tháng đủ chất lượng
+Sales cam kết: Follow up trong 24h
+Sales feedback: Cập nhật MQL quality hàng tuần</div></div>`
+  },
+  mkt_enable: {
+    title: 'Sales Enablement',
+    body: `<div class="modal-section"><h4>Mục tiêu</h4><p>Cung cấp cho Sales đầy đủ nội dung, công cụ và thông tin để close deal nhanh hơn và hiệu quả hơn.</p></div>
+    <div class="modal-section"><h4>Tài liệu Marketing cung cấp cho Sales</h4><ul><li><strong>Pitch deck:</strong> Slide chuẩn để dùng trong demo (cập nhật hàng quý)</li><li><strong>One-pager:</strong> Tóm tắt 1 trang cho executive KH</li><li><strong>Competitor sheet:</strong> So sánh Allsupa vs từng đối thủ chính</li><li><strong>Case study theo ngành:</strong> Để dùng trong proposal và nurturing</li><li><strong>ROI calculator:</strong> Công cụ tính ROI cụ thể cho từng KH</li></ul></div>
+    <div class="modal-section"><h4>Quy trình cập nhật</h4><p>Sales phản hồi tài liệu nào hiệu quả / không hiệu quả trong cuộc họp Sales-Marketing hàng tháng. Marketing cập nhật dựa trên feedback thực tế.</p></div>`
+  },
+
+  /* ── FUNNEL MODALS ── */
+  funnel_aware: {
+    title: 'Awareness — Thu hút người biết đến Allsupa',
+    body: `<div class="modal-section"><h4>Mục tiêu</h4><p>Đưa thương hiệu Allsupa đến đúng đối tượng mục tiêu (ICP), tạo nhận thức ban đầu.</p></div>
+    <div class="modal-section"><h4>Kênh chính</h4><ul><li>SEO & Content blog</li><li>Google / LinkedIn Ads</li><li>Social media (LinkedIn, Facebook)</li><li>Events, hội thảo ngành</li><li>PR & báo chí</li></ul></div>
+    <div class="modal-section"><h4>Metrics</h4><ul><li>Website traffic (organic vs paid)</li><li>Impressions & Reach</li><li>Brand search volume</li></ul></div>`
+  },
+  funnel_interest: {
+    title: 'Interest / Lead — Thu thập thông tin',
+    body: `<div class="modal-section"><h4>Mục tiêu</h4><p>Chuyển visitor thành lead có thông tin liên lạc để có thể nurture về sau.</p></div>
+    <div class="modal-section"><h4>Lead magnet</h4><ul><li>Free trial (dùng thử miễn phí)</li><li>Ebook / Checklist tải về</li><li>Đăng ký webinar</li><li>Form "Request a demo"</li><li>Newsletter subscribe</li></ul></div>
+    <div class="modal-section"><h4>Metrics</h4><ul><li>Conversion rate (visitor → lead): mục tiêu ~3–5%</li><li>Cost per Lead (CPL) theo kênh</li><li>Lead volume hàng tháng</li></ul></div>`
+  },
+  funnel_mql: {
+    title: 'MQL — Marketing Qualified Lead',
+    body: `<div class="modal-section"><h4>Định nghĩa</h4><p>Lead đã thể hiện đủ mức độ quan tâm (qua lead score) và khớp với ICP để Sales đáng bỏ thời gian tiếp cận.</p></div>
+    <div class="modal-section"><h4>Lead scoring tóm tắt</h4><div class="modal-pre">Hành vi cao điểm:
+– Xem Pricing page:     +15
+– Đăng ký dùng thử:     +20
+– Download case study:  +10
+– Xem demo video:       +8
+
+Thông tin phù hợp ICP: +10
+
+Ngưỡng MQL: ≥ 40 điểm</div></div>`
+  },
+  funnel_sql: {
+    title: 'SQL — Sales Qualified Lead',
+    body: `<div class="modal-section"><h4>Định nghĩa</h4><p>MQL đã được Sales tiếp cận và xác nhận có nhu cầu thực sự, có ngân sách, có người ra quyết định và có timeline cụ thể (đủ BANT).</p></div>
+    <div class="modal-section"><h4>Tỷ lệ chuyển đổi mục tiêu</h4><div class="modal-pre">MQL → SQL:     ~55–65% (nếu ICP định nghĩa tốt)
+SQL → Demo:    ~80%
+Demo → Proposal: ~60%
+Proposal → Close: ~30%</div></div>`
+  },
+
+  /* ── SALES PROCESS MODALS ── */
+  sales_prospect: {
+    title: 'Prospecting & Outreach',
+    body: `<div class="modal-section"><h4>Nguồn lead</h4><ul><li>Inbound MQL từ Marketing (ưu tiên xử lý trước)</li><li>Outbound: LinkedIn Sales Navigator, Apollo.io</li><li>Referral từ KH hiện tại (CS cung cấp tín hiệu)</li><li>Events và hội thảo ngành</li></ul></div>
+    <div class="modal-section"><h4>Cold outreach sequence</h4><div class="modal-pre">D+0: LinkedIn connect + note ngắn
+D+2: Email lạnh #1 (value-first, không pitch)
+D+5: Follow-up email #2 (thêm social proof)
+D+8: LinkedIn message
+D+12: Email cuối — "break-up email"</div>
+      <button class="copy-btn" onclick="copyText(this)">Sao chép sequence</button></div>`
+  },
+  sales_qualify: { title: 'Qualification (BANT/MEDDIC)', body: `<div class="modal-section"><h4>BANT Framework</h4><div class="modal-pre">Budget:    "Team bạn có ngân sách cho loại tool này không?"
+Authority: "Ai là người ra quyết định cuối cùng?"
+Need:      "Vấn đề lớn nhất bạn đang gặp là gì?"
+Timeline:  "Bạn muốn triển khai vào khi nào?"</div></div><div class="modal-section"><h4>Disqualify nhanh nếu</h4><ul><li>Không có budget và không có kế hoạch phê duyệt</li><li>Timeline > 6 tháng và không có urgency</li><li>Use case hoàn toàn không phù hợp Allsupa</li></ul></div>` },
+  sales_demo: { title: 'Demo & Discovery Call', body: `<div class="modal-section"><h4>Nguyên tắc demo</h4><ul><li>Demo tập trung vào pain — không demo toàn bộ tính năng</li><li>Bắt đầu bằng discovery, không bắt đầu bằng pitch</li><li>"Bạn có thể thấy tính năng X giải quyết [vấn đề Y] của bạn không?"</li><li>Luôn kết thúc với next step rõ ràng và có deadline</li></ul></div>` },
+  sales_proposal: { title: 'Gửi Proposal & Báo giá', body: `<div class="modal-section"><h4>Gửi trong bao lâu?</h4><p>Gửi trong vòng 24h sau Demo — không để KH phải chờ. Momentum sau một buổi demo tốt sẽ giảm dần theo thời gian.</p></div><div class="modal-section"><h4>Follow-up sau khi gửi</h4><div class="modal-pre">Ngay sau gửi: "Bạn có nhận được chưa?"
+D+2: "Bạn có câu hỏi gì không?"
+D+5: Call follow-up
+D+10: Nếu không phản hồi → "break-up"</div></div>` },
+  sales_negotiate: { title: 'Đàm phán & Xử lý Objection', body: `<div class="modal-section"><h4>Nguyên tắc đàm phán</h4><ul><li>Không giảm giá khi chưa biết lý do thực sự</li><li>Nếu giảm giá → đổi lại điều gì đó (ký dài hơn, thanh toán trước, giới thiệu 2 KH)</li><li>Giữ quyết định discount ở mức manager để tạo "sự hy sinh"</li></ul></div>` },
+  sales_close: { title: 'Ký HĐ & Bàn giao CS', body: `<div class="modal-section"><h4>Checklist Close</h4><div class="modal-pre">□ HĐ đã được ký điện tử (DocuSign)
+□ Billing đã setup
+□ CRM cập nhật → Closed Won
+□ Handoff document điền xong
+□ Email intro AE → CSM gửi KH
+□ Slack #wins: celebrate 🎉</div><button class="copy-btn" onclick="copyText(this)">Sao chép checklist</button></div>` },
+};
+
+MODALS.feedback_report = MODALS.cs4;
+MODALS.release_note = MODALS.h_release;
+MODALS.adoption_brief = MODALS.h_adoption;
+
+function goTo(pageId, tabEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  if (tabEl) tabEl.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function openModal(key) {
+  const m = MODALS[key];
+  if (!m) return;
+  document.getElementById('modal-title').textContent = m.title;
+  document.getElementById('modal-body').innerHTML = m.body || '<p style="color:var(--ink3)">Nội dung đang được cập nhật.</p>';
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal-backdrop')) {
+    document.getElementById('modal-backdrop').classList.remove('open');
+  }
+}
+
+function copyText(btn) {
+  const pre = btn.previousElementSibling;
+  if (!pre) return;
+  navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Đã sao chép!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+const DEPT_COLORS = {
+  cs: { bg: 'var(--teal)', dot: '#fff' },
+  product: { bg: 'var(--purple)', dot: '#fff' },
+  sales: { bg: 'var(--coral)', dot: '#fff' },
+  marketing: { bg: 'var(--blue)', dot: '#fff' }
+};
+const DEPT_DOTS = {
+  cs: 'var(--teal)', product: 'var(--purple)',
+  sales: 'var(--coral)', marketing: 'var(--blue)'
+};
+
+function switchDept(dept) {
+  // Update sidebar buttons
+  document.querySelectorAll('.dt-dept-btn').forEach(b => {
+    b.classList.remove('active');
+    b.style.background = 'var(--white)';
+    b.style.color = 'var(--ink2)';
+  });
+  const btn = document.getElementById('btn-' + dept);
+  btn.classList.add('active');
+  btn.style.background = DEPT_COLORS[dept].bg;
+  btn.style.color = '#fff';
+
+  // Show correct dept panel
+  document.querySelectorAll('#dailytasks .dt-layout > div:last-child > .dt-content').forEach(el => {
+    el.classList.remove('active');
+  });
+  document.getElementById('dept-' + dept).classList.add('active');
+}
+
+function switchRole(btn, roleId) {
+  // Deactivate all role tabs in this dept panel
+  const panel = btn.closest('.dt-content');
+  panel.querySelectorAll('.dt-role-tab').forEach(t => {
+    t.classList.remove('active');
+    t.style.background = 'var(--white)';
+    t.style.color = 'var(--ink2)';
+    t.style.borderColor = 'var(--border)';
+  });
+  // Detect color from first active dept btn
+  const activeDept = document.querySelector('.dt-dept-btn.active');
+  let color = 'var(--teal)';
+  if (activeDept) {
+    const id = activeDept.id;
+    if (id === 'btn-product')   color = 'var(--purple)';
+    if (id === 'btn-sales')     color = 'var(--coral)';
+    if (id === 'btn-marketing') color = 'var(--blue)';
+  }
+  btn.classList.add('active');
+  btn.style.background = color;
+  btn.style.color = '#fff';
+  btn.style.borderColor = color;
+
+  // Show correct role content
+  panel.querySelectorAll('.dt-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(roleId).classList.add('active');
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('done');
+  const txt = el.nextElementSibling;
+  if (txt && txt.classList.contains('dt-task-text')) {
+    txt.classList.toggle('done');
+  }
+}
+</script>
+</body>
+</html>
